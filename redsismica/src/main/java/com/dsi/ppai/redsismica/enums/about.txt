@@ -1,0 +1,1 @@
+esta carpeta sirve para dejar de forma fija diferentes clases con valores fijos/constantes.

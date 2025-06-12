@@ -1,0 +1,1 @@
+esta es la capa model/entity. aca van a estar plasmadas todas las clases del diagrama de clases. el repo ya posee la extension lombook, esta hace que si tiene las anotaciones correspondiente no hace falta escribir los getter y setter de cada clase.

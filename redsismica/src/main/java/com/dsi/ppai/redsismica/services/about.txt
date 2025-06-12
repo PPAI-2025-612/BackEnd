@@ -1,0 +1,1 @@
+esta es la capa del service. aqui van a estar toda la logica de negocio, que basicamente seria el gestor.

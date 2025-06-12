@@ -1,0 +1,1 @@
+esta es la capa del controlador. aqui van a estar el punto de acceso de cada url
