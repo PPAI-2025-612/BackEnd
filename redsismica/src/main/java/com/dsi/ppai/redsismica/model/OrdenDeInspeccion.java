@@ -126,7 +126,7 @@ public class OrdenDeInspeccion {
 		
 	}
 
-	public void actualizarSismografoAFueraDeServicio(List<MotivoFueraServicio> motivos, Date fechaActual) {
+	public void actualizarSismografoAFueraDeServicio(List<MotivoFueraServicio> motivos, LocalDateTime fechaActual) {
 		this.estacionSismologica.actualizarSismografoAFueraDeServicio(motivos,fechaActual);
 		
 	}

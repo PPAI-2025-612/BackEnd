@@ -1,5 +1,6 @@
 package com.dsi.ppai.redsismica.model;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class EstacionSismologica {
 		return sismografo.obtenerMotivoTipo();
 	}
 
-	public void actualizarSismografoAFueraDeServicio(List<MotivoFueraServicio> motivos, Date fechaActual) {
+	public void actualizarSismografoAFueraDeServicio(List<MotivoFueraServicio> motivos, LocalDateTime fechaActual) {
 		this.sismografo.actualizarSismografoAFueraDeServicio(motivos,fechaActual);
 		
 	}

@@ -93,12 +93,12 @@ public class GestorCierreOrdenInspeccion {
 	}
 	
 	
-	private void actualizarSismografoAFueraDeServicio(OrdenDeInspeccion seleccionadaOrden, List<MotivoFueraServicio> motivos, Date fechaActual) {
+	private void actualizarSismografoAFueraDeServicio(OrdenDeInspeccion seleccionadaOrden, List<MotivoFueraServicio> motivos, LocalDateTime fechaActual) {
 		seleccionadaOrden.actualizarSismografoAFueraDeServicio(motivos,fechaActual);
 		
 	}
 
-	private void cerrarOrdenInspeccion(OrdenDeInspeccion seleccionadaOrden, Estado estadoCerrado, Date fechaActual) {
+	private void cerrarOrdenInspeccion(OrdenDeInspeccion seleccionadaOrden, Estado estadoCerrado, LocalDateTime fechaActual) {
 		seleccionadaOrden.cerrarOrdenInspeccion(estadoCerrado,fechaActual);
 		
 	}

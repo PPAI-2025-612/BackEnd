@@ -1,5 +1,7 @@
 package com.dsi.ppai.redsismica.model;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
@@ -28,9 +30,9 @@ public class Sismografo {
 		return cambioEstado.obtenerMotivoTipo();
 	}
 
-	public void actualizarSismografoAFueraDeServicio(List<MotivoFueraServicio> motivos, Date fechaActual) {
+	public void actualizarSismografoAFueraDeServicio(List<MotivoFueraServicio> motivos, LocalDateTime fechaActual) {
 		cambioEstado = new CambioEstado();
-		cambioEstado.setFechaHoraInicio(fechaActual);
+		cambioEstado.setFechaHoraInicio(Date.from(fechaActual.atZone(ZoneId.systemDefault()).toInstant()));
 		cambioEstado.setMotivo(motivos);
 		
 	}
