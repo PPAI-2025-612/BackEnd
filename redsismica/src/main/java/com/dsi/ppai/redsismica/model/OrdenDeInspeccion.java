@@ -1,6 +1,9 @@
 package com.dsi.ppai.redsismica.model;
 
 import java.time.LocalDateTime; // Usar LocalDateTime para manejo moderno de fechas
+import java.util.Date;
+import java.util.List;
+
 // Importa las anotaciones de Jakarta si estás en Spring Boot 3+
 // o de Javax si estás en Spring Boot 2.x
 import jakarta.persistence.Column; // Cambiado a jakarta.persistence
@@ -95,6 +98,7 @@ public class OrdenDeInspeccion {
     @ManyToOne
     private EstacionSismologica estacionSismologica;
 
+
     // NOTA IMPORTANTE:
     // Al usar Lombok @Data, @NoArgsConstructor y @AllArgsConstructor,
     // los getters, setters y constructores se generarán automáticamente.
@@ -102,4 +106,28 @@ public class OrdenDeInspeccion {
     // - Un constructor sin argumentos (público)
     // - Getters y Setters para todos los campos
     // - toString(), equals(), hashCode() si los necesitas explícitamente.
+    
+    public Boolean esDelRI(Empleado empleado) {
+		return this.empleado.equals(empleado);
+	}
+	
+	public EstacionSismologica getIdSismografo() {
+		return this.estacionSismologica;
+	}
+
+	public List<MotivoTipo> obtenerMotivoTipo() {
+		return estacionSismologica.obtenerMotivoTipo();
+		
+	}
+
+	public void cerrarOrdenInspeccion(Estado estadoCerrado, LocalDateTime fechaActual) {
+		setEstado(estadoCerrado.getNombreEstado());
+		setFechaHoraCierre(fechaActual);
+		
+	}
+
+	public void actualizarSismografoAFueraDeServicio(List<MotivoFueraServicio> motivos, Date fechaActual) {
+		this.estacionSismologica.actualizarSismografoAFueraDeServicio(motivos,fechaActual);
+		
+	}
 }

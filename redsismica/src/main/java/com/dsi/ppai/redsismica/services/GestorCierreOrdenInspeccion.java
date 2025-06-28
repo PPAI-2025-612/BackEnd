@@ -13,6 +13,7 @@ import com.dsi.ppai.redsismica.repository.EstadoRepository;
 import com.dsi.ppai.redsismica.repository.OrdenInspeccionRepository;
 import com.dsi.ppai.redsismica.repository.SesionRepository;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -81,7 +82,7 @@ public class GestorCierreOrdenInspeccion {
 		
 		Estado estadoCerrado = buscarEstadoCerrado();
 		
-		Date fechaActual = getFechaHoraActual();
+		LocalDateTime fechaActual = getFechaHoraActual();
 		
 		cerrarOrdenInspeccion(seleccionadaOrden, estadoCerrado, fechaActual);
 		actualizarSismografoAFueraDeServicio(seleccionadaOrden, motivos, fechaActual);
@@ -102,8 +103,8 @@ public class GestorCierreOrdenInspeccion {
 		
 	}
 
-	private Date getFechaHoraActual() {
-		return new Date(System.currentTimeMillis());
+	private LocalDateTime getFechaHoraActual() {
+		return LocalDateTime.now();
 	}
 
 	private Estado buscarEstadoCerrado() {

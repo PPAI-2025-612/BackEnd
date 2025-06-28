@@ -1,6 +1,7 @@
 package com.dsi.ppai.redsismica.model;
 
 import java.util.Date;
+import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,4 +23,19 @@ public class EstacionSismologica {
     private Double longitud;
     private String nombre;
     private int nroCertificacionAdquisicion;
+    private Sismografo sismografo;
+	
+    public Sismografo getIdSismografo() {
+		return this.sismografo;
+	}
+
+	public List<MotivoTipo> obtenerMotivoTipo() {
+		
+		return sismografo.obtenerMotivoTipo();
+	}
+
+	public void actualizarSismografoAFueraDeServicio(List<MotivoFueraServicio> motivos, Date fechaActual) {
+		this.sismografo.actualizarSismografoAFueraDeServicio(motivos,fechaActual);
+		
+	}
 }
