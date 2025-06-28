@@ -1,5 +1,8 @@
 package com.dsi.ppai.redsismica.model;
 
+import java.util.Date;
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,4 +19,19 @@ public class Sismografo {
 	private Long id;
 	private int identificadorSismografo;
 	private CambioEstado cambioEstado;
+	
+	public int getId() {
+		return this.identificadorSismografo;
+	}
+
+	public List<MotivoTipo> obtenerMotivoTipo() {
+		return cambioEstado.obtenerMotivoTipo();
+	}
+
+	public void actualizarSismografoAFueraDeServicio(List<MotivoFueraServicio> motivos, Date fechaActual) {
+		cambioEstado = new CambioEstado();
+		cambioEstado.setFechaHoraInicio(fechaActual);
+		cambioEstado.setMotivo(motivos);
+		
+	}
 }

@@ -1,6 +1,7 @@
 package com.dsi.ppai.redsismica.model;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -30,4 +31,27 @@ public class OrdenDeInspeccion {
 	private EstacionSismologica estacionSismologica;
 	
 	
+	public Boolean esDelRI(Empleado empleado) {
+		return this.empleado.equals(empleado);
+	}
+	
+	public EstacionSismologica getIdSismografo() {
+		return this.estacionSismologica;
+	}
+
+	public List<MotivoTipo> obtenerMotivoTipo() {
+		return estacionSismologica.obtenerMotivoTipo();
+		
+	}
+
+	public void cerrarOrdenInspeccion(Estado estadoCerrado, Date fechaActual) {
+		setEstado(estadoCerrado);
+		setFechaHoraCierre(fechaActual);
+		
+	}
+
+	public void actualizarSismografoAFueraDeServicio(List<MotivoFueraServicio> motivos, Date fechaActual) {
+		this.estacionSismologica.actualizarSismografoAFueraDeServicio(motivos,fechaActual);
+		
+	}
 }

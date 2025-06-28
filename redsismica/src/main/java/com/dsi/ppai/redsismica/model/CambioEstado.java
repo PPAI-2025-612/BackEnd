@@ -1,5 +1,6 @@
 package com.dsi.ppai.redsismica.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -21,6 +22,19 @@ public class CambioEstado {
 	private Date fechaHoraInicio;
 	private Date fechaHoraFin;
 	private List<MotivoFueraServicio> motivoFueraServicio;
+	
+	public List<MotivoTipo> obtenerMotivoTipo() {
+		List<MotivoTipo> motivos = new ArrayList<MotivoTipo>();
+		for (MotivoFueraServicio motivo : motivoFueraServicio) {
+			motivos.addAll(motivo.getMotivoTipo());
+		}
+		return motivos;
+	}
+
+	public void setMotivo(List<MotivoFueraServicio> motivos) {
+		this.motivoFueraServicio = motivos;
+		
+	}
 	
 	
 }

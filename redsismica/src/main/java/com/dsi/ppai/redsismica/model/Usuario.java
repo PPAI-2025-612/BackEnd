@@ -9,4 +9,5 @@ import lombok.Data;
 public class Usuario {
 
 	private String nombreUsuario;
+	private Empleado empleado;
 }
