@@ -1,5 +1,6 @@
 package com.dsi.ppai.redsismica.model.values;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import lombok.Data;
@@ -8,11 +9,11 @@ import lombok.Data;
 public class ordenInspeccion {
 
 	private int nroOrden;
-	private Date fechaFinalizacion;
+	private LocalDateTime fechaFinalizacion;
 	private String NombreEstacionSismologica;
 	private int idSismogrefo;
 	
-	public ordenInspeccion(int nroOrden, Date fechaFinalizacion, String nombreEstacionSismologica, int idSismogrefo) {
+	public ordenInspeccion(int nroOrden, LocalDateTime fechaFinalizacion, String nombreEstacionSismologica, int idSismogrefo) {
 		super();
 		this.nroOrden = nroOrden;
 		this.fechaFinalizacion = fechaFinalizacion;

@@ -14,6 +14,7 @@ import com.dsi.ppai.redsismica.repository.OrdenInspeccionRepository;
 import com.dsi.ppai.redsismica.repository.SesionRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -140,7 +141,7 @@ public class GestorCierreOrdenInspeccion {
 			if(ordenDeInspeccion.esDelRI(empleado)) {
 				if(ordenDeInspeccion.getEstado().esAmbitoOrdenDelInspeccion() || ordenDeInspeccion.getEstado().esCompletamenteRealizada()) {
 					int nroOrden = ordenDeInspeccion.getNumeroOrden();
-					Date fechaFinalizacion = ordenDeInspeccion.getFechaHoraFinalizacion();
+					LocalDateTime fechaFinalizacion = ordenDeInspeccion.getFechaHoraFinalizacion();
 					String nombreEstacionSismologica = ordenDeInspeccion.getEstacionSismologica().getNombre();
 					int idSismografo = ordenDeInspeccion.getIdSismografo().getIdSismografo().getId();
 					
