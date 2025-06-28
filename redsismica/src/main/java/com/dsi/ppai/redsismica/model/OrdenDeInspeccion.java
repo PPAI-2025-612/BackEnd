@@ -63,7 +63,7 @@ public class OrdenDeInspeccion {
     private Integer totalTareas; // Total de tareas
 
     @Column(nullable = false)
-    private String estado; // El estado de la orden (ej. "Completada", "Cerrada")
+    private Estado estado; // El estado de la orden (ej. "Completada", "Cerrada")
     // Se cambia de @ManyToOne Estado a String para manejarlo más fácilmente como texto
     // Si mantienes @ManyToOne Estado, necesitarías gestionar la entidad Estado correctamente.
     // Para simplificar, lo definimos como String para coincidir con el DTO del frontend.
@@ -121,7 +121,7 @@ public class OrdenDeInspeccion {
 	}
 
 	public void cerrarOrdenInspeccion(Estado estadoCerrado, LocalDateTime fechaActual) {
-		setEstado(estadoCerrado.getNombreEstado());
+		setEstado(estadoCerrado);
 		setFechaHoraCierre(fechaActual);
 		
 	}
