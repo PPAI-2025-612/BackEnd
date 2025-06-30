@@ -1,10 +1,12 @@
 package com.dsi.ppai.redsismica.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
 @Entity
@@ -16,4 +18,7 @@ public class MotivoTipo {
 	private Long id;
 	private String descripcion;
 	private String nombre;
+	@ManyToOne
+    @JoinColumn(name = "motivo_fuera_servicio_id") // FK hacia MotivoFueraServicio
+    private MotivoFueraServicio motivoFueraServicio;
 }

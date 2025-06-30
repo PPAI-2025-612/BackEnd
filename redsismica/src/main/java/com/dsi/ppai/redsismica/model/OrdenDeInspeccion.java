@@ -11,6 +11,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table; // Es buena práctica especificar el nombre de la tabla
 
@@ -62,7 +63,8 @@ public class OrdenDeInspeccion {
     @Column(name = "total_tareas")
     private Integer totalTareas; // Total de tareas
 
-    @Column(nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "estado_id", nullable = false) // Nombre de la columna FK que hace referencia a Estado
     private Estado estado; // El estado de la orden (ej. "Completada", "Cerrada")
     // Se cambia de @ManyToOne Estado a String para manejarlo más fácilmente como texto
     // Si mantienes @ManyToOne Estado, necesitarías gestionar la entidad Estado correctamente.

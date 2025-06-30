@@ -8,7 +8,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import lombok.Data;
 @Entity
 @Data 
@@ -24,6 +25,8 @@ public class EstacionSismologica {
     private Double longitud;
     private String nombre;
     private int nroCertificacionAdquisicion;
+    @OneToOne
+    @JoinColumn(name = "sismografo_id")
     private Sismografo sismografo;
 	
     public Sismografo getIdSismografo() {

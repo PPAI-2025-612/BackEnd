@@ -142,7 +142,7 @@ public class GestorCierreOrdenInspeccion {
 					int nroOrden = ordenDeInspeccion.getNumeroOrden();
 					LocalDateTime fechaFinalizacion = ordenDeInspeccion.getFechaHoraFinalizacion();
 					String nombreEstacionSismologica = ordenDeInspeccion.getEstacionSismologica().getNombre();
-					int idSismografo = ordenDeInspeccion.getIdSismografo().getIdSismografo().getId();
+					int idSismografo = ordenDeInspeccion.getIdSismografo().getIdSismografo().getId2();
 					
 					ordenFinales.add(new ordenInspeccion(nroOrden,fechaFinalizacion,nombreEstacionSismologica,idSismografo));
 				}

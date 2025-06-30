@@ -10,5 +10,5 @@ import java.util.List;
 public interface OrdenInspeccionRepository extends JpaRepository<OrdenDeInspeccion, Long> {
 
     // Método para buscar órdenes por estado
-    List<OrdenDeInspeccion> findByEstado(String estado);
+    List<OrdenDeInspeccion> findByEstado_NombreEstado(String estado);
 }
