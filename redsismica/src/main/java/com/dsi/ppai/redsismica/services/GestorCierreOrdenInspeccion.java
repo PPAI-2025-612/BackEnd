@@ -14,6 +14,7 @@ import com.dsi.ppai.redsismica.repository.EstadoRepository;
 import com.dsi.ppai.redsismica.repository.OrdenInspeccionRepository;
 import com.dsi.ppai.redsismica.repository.SesionRepository;
 import com.dsi.ppai.redsismica.services.mail.InterfaceMail;
+import com.dsi.ppai.redsismica.services.monitorccrs.InterfaceCCRS;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -40,6 +41,16 @@ public class GestorCierreOrdenInspeccion {
 	@Autowired
 	private EmpleadoRepository empleadoRepository;
 	
+	private final InterfaceMail notificador;
+	
+	private final InterfaceCCRS monitor;
+
+	// Inyección por constructor
+	public GestorCierreOrdenInspeccion(InterfaceMail notificador, InterfaceCCRS monitor) {
+		this.notificador = notificador;
+		this.monitor = monitor;
+	}
+	    
     public String cerrarOrden(CierreOrdenRequest request) throws IllegalArgumentException {
         if (request.getObservacionCierre() == null || request.getObservacionCierre().trim().isEmpty()) {
             throw new IllegalArgumentException("La observación de cierre es obligatoria");
@@ -94,16 +105,26 @@ public class GestorCierreOrdenInspeccion {
 		
 		List<String> listaMails = buscarEmpleadoResponsableReparacion();
 		
-		enviarNotificacionEmpleadoReparacion(listaMails);
+		String asunto = "Sismografo Fuera de servicio";
+		String mensaje = "Hola, se le informa que el sismografo " + seleccionadaOrden.getIdSismografo().getIdSismografo().getId2() 
+				+ " se encuentra en estado Fuera de Servicio"
+				+ " al momento de "+ fechaActual.toString() + " por los motivos " + motivos.toString();
+		enviarNotificacionEmpleadoReparacion(listaMails,asunto,mensaje);
+		
+		publicarNotifficacionEnMonitorCCRS(mensaje);
 		//actu
 		ordenInspeccionRepository.save(seleccionadaOrden);
 		
 		return null;
 	}
 	
-	private void enviarNotificacionEmpleadoReparacion(List<String> listaMails) {
-		InterfaceMail notificador = ; 
-		notificador.enviarmail(listaMails, null, null);
+	private void publicarNotifficacionEnMonitorCCRS(String mensaje) {
+		monitor.publicarEnMonitor(mensaje);
+		
+	}
+
+	private void enviarNotificacionEmpleadoReparacion(List<String> listaMails, String asunto, String mensaje) {		
+		notificador.enviarmail(listaMails, asunto, mensaje);
 	}
 
 
