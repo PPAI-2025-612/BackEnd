@@ -9,9 +9,11 @@ import com.dsi.ppai.redsismica.model.MotivoTipo;
 import com.dsi.ppai.redsismica.model.OrdenDeInspeccion;
 import com.dsi.ppai.redsismica.model.Sesion;
 import com.dsi.ppai.redsismica.model.values.ordenInspeccion;
+import com.dsi.ppai.redsismica.repository.EmpleadoRepository;
 import com.dsi.ppai.redsismica.repository.EstadoRepository;
 import com.dsi.ppai.redsismica.repository.OrdenInspeccionRepository;
 import com.dsi.ppai.redsismica.repository.SesionRepository;
+import com.dsi.ppai.redsismica.services.mail.InterfaceMail;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -34,6 +36,9 @@ public class GestorCierreOrdenInspeccion {
 	
 	@Autowired
 	private EstadoRepository estadoRepository;
+	
+	@Autowired
+	private EmpleadoRepository empleadoRepository;
 	
     public String cerrarOrden(CierreOrdenRequest request) throws IllegalArgumentException {
         if (request.getObservacionCierre() == null || request.getObservacionCierre().trim().isEmpty()) {
@@ -86,13 +91,35 @@ public class GestorCierreOrdenInspeccion {
 		
 		cerrarOrdenInspeccion(seleccionadaOrden, estadoCerrado, fechaActual);
 		actualizarSismografoAFueraDeServicio(seleccionadaOrden, motivos, fechaActual);
+		
+		List<String> listaMails = buscarEmpleadoResponsableReparacion();
+		
+		enviarNotificacionEmpleadoReparacion(listaMails);
 		//actu
 		ordenInspeccionRepository.save(seleccionadaOrden);
 		
 		return null;
 	}
 	
-	
+	private void enviarNotificacionEmpleadoReparacion(List<String> listaMails) {
+		InterfaceMail notificador = ; 
+		notificador.enviarmail(listaMails, null, null);
+	}
+
+
+	private List<String> buscarEmpleadoResponsableReparacion() {
+		List<String> listaMails = new ArrayList<String>();
+		List<Empleado> empleadosReparacion = (List<Empleado>) empleadoRepository.findAll();
+		for (Empleado empleado : empleadosReparacion) {
+			if( empleado.esResponsableReparacion()) {
+				listaMails.add(empleado.getMail());
+			}
+		}
+		return listaMails;
+		
+	}
+
+
 	private void actualizarSismografoAFueraDeServicio(OrdenDeInspeccion seleccionadaOrden, List<MotivoFueraServicio> motivos, LocalDateTime fechaActual) {
 		seleccionadaOrden.actualizarSismografoAFueraDeServicio(motivos,fechaActual);
 		

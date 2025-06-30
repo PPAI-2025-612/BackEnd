@@ -21,4 +21,8 @@ public class Empleado {
 
     @ManyToOne
     private Rol rol;  // Relación ManyToOne con Rol
+
+	public boolean esResponsableReparacion() {
+		return this.rol.getNombre().equals("ResponsableReparacion");
+	}
 }

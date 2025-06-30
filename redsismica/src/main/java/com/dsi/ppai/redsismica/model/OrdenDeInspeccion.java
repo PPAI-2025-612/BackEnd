@@ -1,6 +1,7 @@
 package com.dsi.ppai.redsismica.model;
 
 import java.time.LocalDateTime; // Usar LocalDateTime para manejo moderno de fechas
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -132,4 +133,10 @@ public class OrdenDeInspeccion {
 		this.estacionSismologica.actualizarSismografoAFueraDeServicio(motivos,fechaActual);
 		
 	}
+
+	public List<Empleado> buscarEmpleadoResponsableReparacion() {
+		return null;
+	}
+
+	
 }
