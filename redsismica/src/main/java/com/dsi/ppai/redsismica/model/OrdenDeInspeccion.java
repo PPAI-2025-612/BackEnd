@@ -84,8 +84,8 @@ public class OrdenDeInspeccion {
 		return this.usuario.equals(usuario);
 	}
 	
-	public EstacionSismologica getIdSismografo() {
-		return this.estacionSismologica;
+	public int getIdSismografo() {
+		return this.estacionSismologica.getIdSismografo();
 	}
 
 	public List<MotivoTipo> obtenerMotivoTipo() {
@@ -106,6 +106,20 @@ public class OrdenDeInspeccion {
 
 	public List<Empleado> buscarEmpleadoResponsableReparacion() {
 		return null;
+	}
+
+	public boolean esCompletamenteRealizada() {
+		return estado.esCompletamenteRealizada();
+	}
+
+	public LocalDateTime getFechaFinalizacion() {
+		
+		return fechaHoraFinalizacion;
+	}
+
+	public String getNombreEstacionSismologica() {
+		
+		return estacionSismologica.getNombre(); 
 	}
 
 	

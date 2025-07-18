@@ -19,4 +19,8 @@ public class MotivoTipo {
 	private String descripcion;
 	private String nombre;
 	
+	public String getMotivoTipo() {
+		return nombre;
+	}
+	
 }

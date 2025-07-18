@@ -37,10 +37,15 @@ public class Sismografo {
 		return cambioEstado.obtenerMotivoTipo();
 	}
 
-	public void actualizarSismografoAFueraDeServicio(List<MotivoFueraServicio> motivos, LocalDateTime fechaActual) {
+	public void actualizarSismografoAFueraDeServicio(List<MotivoTipo> motivos, LocalDateTime fechaActual) {
+		cambioEstado.setFechaHoraFin(Date.from(fechaActual.atZone(ZoneId.systemDefault()).toInstant()));
 		cambioEstado = new CambioEstado();
 		cambioEstado.setFechaHoraInicio(Date.from(fechaActual.atZone(ZoneId.systemDefault()).toInstant()));
 		cambioEstado.setMotivo(motivos);
 		
+	}
+
+	public int getId() {
+		return identificadorSismografo;
 	}
 }

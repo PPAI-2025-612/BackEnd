@@ -18,4 +18,9 @@ public class Usuario {
 	@ManyToOne
 	@JoinColumn(name = "empleado_id")  // nombre columna FK correcto
 	private Empleado empleado;
+	
+	
+	public Usuario getEmpleado() {
+		return this;
+	}
 }

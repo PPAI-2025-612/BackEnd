@@ -4,13 +4,14 @@ import com.dsi.ppai.redsismica.dto.CierreOrdenRequest;
 import com.dsi.ppai.redsismica.dto.MotivoSeleccionadoDTO;
 import com.dsi.ppai.redsismica.model.Empleado;
 import com.dsi.ppai.redsismica.model.Estado;
-import com.dsi.ppai.redsismica.model.MotivoFueraServicio;
 import com.dsi.ppai.redsismica.model.MotivoTipo;
 import com.dsi.ppai.redsismica.model.OrdenDeInspeccion;
 import com.dsi.ppai.redsismica.model.Sesion;
+import com.dsi.ppai.redsismica.model.Usuario;
 import com.dsi.ppai.redsismica.model.values.ordenInspeccion;
 import com.dsi.ppai.redsismica.repository.EmpleadoRepository;
 import com.dsi.ppai.redsismica.repository.EstadoRepository;
+import com.dsi.ppai.redsismica.repository.MotivoTipoRepository;
 import com.dsi.ppai.redsismica.repository.OrdenInspeccionRepository;
 import com.dsi.ppai.redsismica.repository.SesionRepository;
 import com.dsi.ppai.redsismica.services.mail.InterfaceMail;
@@ -40,6 +41,9 @@ public class GestorCierreOrdenInspeccion {
 	
 	@Autowired
 	private EmpleadoRepository empleadoRepository;
+	
+	@Autowired
+	private MotivoTipoRepository motivoTipoRepository;
 	
 	private final InterfaceMail notificador;
 	
@@ -71,54 +75,36 @@ public class GestorCierreOrdenInspeccion {
     }
     
     
-	public List<ordenInspeccion> nuevoCierreOrdenInspeccion() {
+	public List<ordenInspeccion> opcionCierreOrdenDeInspeccion() { //listo
 		
 		//buscar empleado logueado
-		Empleado empleado = buscarRILogeado();
+		Usuario empleado = buscarRILogeado();
 		
 		List<ordenInspeccion> ordenFinales = buscarOrdenInspeccionCompletamenteRealizadaDelRI(empleado);
 		
-		ordenFinales = ordenarOrdenesInspeccion(ordenFinales);
+		ordenFinales = ordenarOrdenesDeInspeccion(ordenFinales);
 		
 		return ordenFinales;
 	}
 	
-	public List<MotivoTipo> tomarObservacionCierre(long idOrdenInspeccion) {
+	public List<String> tomarObservacionCierre() {
 		
-		OrdenDeInspeccion orden = ordenInspeccionRepository.findById(idOrdenInspeccion).get();
-		
-		return habilitarActualizarSituacionSismografo(orden);
+		return habilitarActualizarSituacionSismografo();
 		
 	}
 	
 	
-	public Objects tomarConfirmacionCierreInspeccion(long idOrdenInspeccion, List<MotivoFueraServicio> motivos) {
+	public Objects tomarConfirmacionDeCierreInspeccion(long idOrdenInspeccion, List<MotivoTipo> motivos) {
 		OrdenDeInspeccion seleccionadaOrden = ordenInspeccionRepository.findById(idOrdenInspeccion).get();
-		validarMotivo(seleccionadaOrden);
-		
-		Estado estadoCerrado = buscarEstadoCerrado();
-		
-		LocalDateTime fechaActual = getFechaHoraActual();
-		
-		cerrarOrdenInspeccion(seleccionadaOrden, estadoCerrado, fechaActual);
-		actualizarSismografoAFueraDeServicio(seleccionadaOrden, motivos, fechaActual);
-		
-		List<String> listaMails = buscarEmpleadoResponsableReparacion();
-		
-		String asunto = "Sismografo Fuera de servicio";
-		String mensaje = "Hola, se le informa que el sismografo " + seleccionadaOrden.getIdSismografo().getIdSismografo().getId2() 
-				+ " se encuentra en estado Fuera de Servicio"
-				+ " al momento de "+ fechaActual.toString() + " por los motivos " + motivos.toString();
-		enviarNotificacionEmpleadoReparacion(listaMails,asunto,mensaje);
-		
-		publicarNotifficacionEnMonitorCCRS(mensaje);
-		//actu
-		ordenInspeccionRepository.save(seleccionadaOrden);
-		
+		if(validarMotivo(motivos)) {
+			
+			cerrarOrdenInspeccion(seleccionadaOrden,motivos);
+			
+		}
 		return null;
 	}
 	
-	private void publicarNotifficacionEnMonitorCCRS(String mensaje) {
+	private void publicarNotificacionEnMonitorCCRS(String mensaje) {
 		monitor.publicarEnMonitor(mensaje);
 		
 	}
@@ -141,13 +127,31 @@ public class GestorCierreOrdenInspeccion {
 	}
 
 
-	private void actualizarSismografoAFueraDeServicio(OrdenDeInspeccion seleccionadaOrden, List<MotivoFueraServicio> motivos, LocalDateTime fechaActual) {
+	private void actualizarSismografoAFueraDeServicio(OrdenDeInspeccion seleccionadaOrden, List<MotivoTipo> motivos, LocalDateTime fechaActual) {
 		seleccionadaOrden.actualizarSismografoAFueraDeServicio(motivos,fechaActual);
 		
 	}
 
-	private void cerrarOrdenInspeccion(OrdenDeInspeccion seleccionadaOrden, Estado estadoCerrado, LocalDateTime fechaActual) {
+	private void cerrarOrdenInspeccion(OrdenDeInspeccion seleccionadaOrden, List<MotivoTipo> motivos) {
+		LocalDateTime fechaActual = getFechaHoraActual();
+		
+		Estado estadoCerrado = buscarEstadoCerrado();
+		
 		seleccionadaOrden.cerrarOrdenInspeccion(estadoCerrado,fechaActual);
+		
+		actualizarSismografoAFueraDeServicio(seleccionadaOrden, motivos, fechaActual);
+		
+		List<String> listaMails = buscarEmpleadoResponsableReparacion();
+		
+		String asunto = "Sismografo Fuera de servicio";
+		String mensaje = "Hola, se le informa que el sismografo " + seleccionadaOrden.getIdSismografo() 
+				+ " se encuentra en estado Fuera de Servicio"
+				+ " al momento de "+ fechaActual.toString() + " por los motivos " + motivos.toString();
+		enviarNotificacionEmpleadoReparacion(listaMails,asunto,mensaje);
+		
+		publicarNotificacionEnMonitorCCRS(mensaje);
+		//actu
+		ordenInspeccionRepository.save(seleccionadaOrden);
 		
 	}
 
@@ -167,30 +171,34 @@ public class GestorCierreOrdenInspeccion {
 		return null;
 	}
 
-	private Objects validarMotivo(OrdenDeInspeccion orden) {
-		// TODO Auto-generated method stub
-		return null;
+	private boolean validarMotivo(List<MotivoTipo> motivos) {
+		for (MotivoTipo motivo : motivos) {
+			if(motivo == null) {
+				return false;
+			}
+		}
+		return true;
 	}
 
-	private Empleado buscarRILogeado() {
+	private Usuario buscarRILogeado() {
 		
 		Sesion sesionAcual = sesionRepository.findById(1L).get();
 		
-		return sesionAcual.ObtenerRILogueado().getEmpleado();
+		return sesionAcual.ObtenerRILogueado();
 	}
 	
-	private List<ordenInspeccion> buscarOrdenInspeccionCompletamenteRealizadaDelRI(Empleado empleado) {
+	private List<ordenInspeccion> buscarOrdenInspeccionCompletamenteRealizadaDelRI(Usuario empleado) {
 		
 		List<OrdenDeInspeccion> ordenes = (List<OrdenDeInspeccion>) ordenInspeccionRepository.findAll();
 		List<ordenInspeccion> ordenFinales = new ArrayList<>();
 		
 		for (OrdenDeInspeccion ordenDeInspeccion : ordenes) {
 			if(ordenDeInspeccion.esDelRI(empleado)) {
-				if(ordenDeInspeccion.getEstado().esAmbitoOrdenDelInspeccion() || ordenDeInspeccion.getEstado().esCompletamenteRealizada()) {
+				if(ordenDeInspeccion.esCompletamenteRealizada()) {
 					int nroOrden = ordenDeInspeccion.getNumeroOrden();
-					LocalDateTime fechaFinalizacion = ordenDeInspeccion.getFechaHoraFinalizacion();
-					String nombreEstacionSismologica = ordenDeInspeccion.getEstacionSismologica().getNombre();
-					int idSismografo = ordenDeInspeccion.getIdSismografo().getIdSismografo().getId2();
+					LocalDateTime fechaFinalizacion = ordenDeInspeccion.getFechaFinalizacion();
+					String nombreEstacionSismologica = ordenDeInspeccion.getNombreEstacionSismologica();
+					int idSismografo = ordenDeInspeccion.getIdSismografo();
 					
 					ordenFinales.add(new ordenInspeccion(nroOrden,fechaFinalizacion,nombreEstacionSismologica,idSismografo));
 				}
@@ -200,7 +208,7 @@ public class GestorCierreOrdenInspeccion {
 		return ordenFinales;
 	}
 	
-	private List<ordenInspeccion> ordenarOrdenesInspeccion(List<ordenInspeccion> ordenes){
+	private List<ordenInspeccion> ordenarOrdenesDeInspeccion(List<ordenInspeccion> ordenes){
 		Collections.sort(ordenes, new Comparator<ordenInspeccion>() {
 			
 			@Override
@@ -214,12 +222,16 @@ public class GestorCierreOrdenInspeccion {
 		return ordenes;
 	}
 	
-	private List<MotivoTipo> habilitarActualizarSituacionSismografo(OrdenDeInspeccion orden) {
-		return buscarMotivosTipo(orden) ;
+	private List<String> habilitarActualizarSituacionSismografo() {
+		return buscarMotivosTipo() ;
 	}
 	
-	private List<MotivoTipo> buscarMotivosTipo(OrdenDeInspeccion orden) {
-		return orden.obtenerMotivoTipo();
-		
+	private List<String> buscarMotivosTipo() {
+		List<String> motivoTipo = new ArrayList<>();
+		List<MotivoTipo> motivos = (List<MotivoTipo>) motivoTipoRepository.findAll();
+		for (MotivoTipo motivo : motivos) {
+			motivoTipo.add(motivo.getMotivoTipo());
+		}
+		return motivoTipo;
 	}
 }

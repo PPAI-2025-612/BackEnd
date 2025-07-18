@@ -23,8 +23,8 @@ public class EstacionSismologica {
     @JoinColumn(name = "sismografo_id")
     private Sismografo sismografo;
 	
-    public Sismografo getIdSismografo() {
-		return this.sismografo;
+    public int getIdSismografo() {
+		return this.sismografo.getId();
 	}
 
 	public List<MotivoTipo> obtenerMotivoTipo() {

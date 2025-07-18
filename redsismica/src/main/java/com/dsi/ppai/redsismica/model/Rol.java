@@ -15,4 +15,8 @@ public class Rol {
     private Long id;
     private String descripcion;
     private String nombre;
+    
+    public boolean esResponsableReparacion() {
+    	return this.nombre.equals("ResponsableReparacion");
+    }
 }
