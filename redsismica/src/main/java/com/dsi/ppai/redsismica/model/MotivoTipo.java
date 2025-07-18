@@ -18,7 +18,5 @@ public class MotivoTipo {
 	private Long id;
 	private String descripcion;
 	private String nombre;
-	@ManyToOne
-    @JoinColumn(name = "motivo_fuera_servicio_id") // FK hacia MotivoFueraServicio
-    private MotivoFueraServicio motivoFueraServicio;
+	
 }

@@ -18,13 +18,7 @@ public class EstacionSismologica {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private int codigoEstacion;  // corregido typo
-    private String documentoCertificacionAdquisicion;
-    private Date fechaSolicitudCertificacion;
-    private Double latitud;      // mejor usar Double para coordenadas
-    private Double longitud;
     private String nombre;
-    private int nroCertificacionAdquisicion;
     @OneToOne
     @JoinColumn(name = "sismografo_id")
     private Sismografo sismografo;
@@ -38,7 +32,7 @@ public class EstacionSismologica {
 		return sismografo.obtenerMotivoTipo();
 	}
 
-	public void actualizarSismografoAFueraDeServicio(List<MotivoFueraServicio> motivos, LocalDateTime fechaActual) {
+	public void actualizarSismografoAFueraDeServicio(List<MotivoTipo> motivos, LocalDateTime fechaActual) {
 		this.sismografo.actualizarSismografoAFueraDeServicio(motivos,fechaActual);
 		
 	}

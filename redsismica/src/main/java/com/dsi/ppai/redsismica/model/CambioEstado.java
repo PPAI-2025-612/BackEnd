@@ -27,20 +27,20 @@ public class CambioEstado {
 	private Date fechaHoraInicio;
 	private Date fechaHoraFin;
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "cambio_estado_id") // FK en MotivoFueraServicio hacia CambioEstado
-	private List<MotivoFueraServicio> motivoFueraServicio;
+    @JoinColumn(name = "cambio_estado_id") // FK en MotivoTipo hacia CambioEstado
+	private List<MotivoTipo> MotivoTipo;
 	
 	public List<MotivoTipo> obtenerMotivoTipo() {
 		List<MotivoTipo> motivos = new ArrayList<MotivoTipo>();
-		for (MotivoFueraServicio motivo : motivoFueraServicio) {
-			motivos.addAll(motivo.getMotivoTipo());
+		for (MotivoTipo motivo : MotivoTipo) {
+			motivos.add(motivo);
 		}
 		return motivos;
 	}
 
-	public void setMotivo(List<MotivoFueraServicio> motivos) {
-		this.motivoFueraServicio = motivos;
-		
+	public void setMotivo(List<MotivoTipo> motivos) {
+		this.MotivoTipo = motivos;
+
 	}
 	
 	

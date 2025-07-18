@@ -17,7 +17,6 @@ public class Empleado {
     private String apellido;
     private String mail;
     private String nombre;
-    private String telefono;
 
     @ManyToOne
     private Rol rol;  // Relación ManyToOne con Rol

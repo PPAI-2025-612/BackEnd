@@ -38,31 +38,14 @@ public class OrdenDeInspeccion {
     @Column(name = "fecha_hora_finalizacion")
     private LocalDateTime fechaHoraFinalizacion; // Cambiado a LocalDateTime
 
-    @Column(name = "fecha_hora_inicio")
-    private LocalDateTime fechaHoraInicio; // Cambiado a LocalDateTime
-
     @Column(name = "numero_orden", nullable = false, unique = true)
     private int numeroOrden;
 
-    // --- Nuevos campos basados en el frontend OrdenInspeccion DTO ---
-    @Column(nullable = false)
-    private String cliente; // Campo para el cliente
+      // --- Campos específicos para el Cierre de Orden (ya existentes algunos, otros nuevos) ---
+    @Column(name = "observacion_cierre", length = 1000)
+    private String observacionCierre; // Ya lo tenías, mantenemos.
 
-    @Column(name = "identificador_sismografo", nullable = false)
-    private String identificadorSismografo; // Campo para el identificador del sismógrafo
-
-    // Asumimos que Empleado ya tiene el nombre, pero el frontend envía un 'responsable' string.
-    // Si 'Empleado' va a ser el responsable de la creación y también del cierre,
-    // podríamos usar el mismo Empleado para la referencia.
-    // Sin embargo, si el frontend envía un String simple, es mejor que coincida.
-    @Column(nullable = false)
-    private String responsable; // El responsable inicial (según frontend DTO)
-
-    @Column(name = "tareas_completadas")
-    private Integer tareasCompletadas; // Cantidad de tareas completadas
-
-    @Column(name = "total_tareas")
-    private Integer totalTareas; // Total de tareas
+   
 
     @ManyToOne
     @JoinColumn(name = "estado_id", nullable = false) // Nombre de la columna FK que hace referencia a Estado
@@ -72,25 +55,12 @@ public class OrdenDeInspeccion {
     // Para simplificar, lo definimos como String para coincidir con el DTO del frontend.
 
 
-    // --- Campos específicos para el Cierre de Orden (ya existentes algunos, otros nuevos) ---
-    @Column(name = "observacion_cierre", length = 1000)
-    private String observacionCierre; // Ya lo tenías, mantenemos.
-
-    @Column(name = "responsable_cierre_id")
-    private String responsableCierreId; // ID del responsable que realiza el cierre
-
-    @Column(name = "responsable_cierre_nombre")
-    private String responsableCierreNombre; // Nombre del responsable que realiza el cierre
-
-    // Para los motivos seleccionados: se guardan como un String JSON para simplificar la persistencia
-    @Column(name = "motivos_seleccionados_json", columnDefinition = "TEXT")
-    private String motivosSeleccionadosJson;
 
     // --- Relaciones existentes ---
     // Si Empleado es el responsable inicial de la orden, puedes mantenerlo así.
     // Asegúrate de que este Empleado pueda mapearse al campo 'responsable' del DTO del frontend.
     @ManyToOne
-    private Empleado empleado; // Mapea al empleado que creó/gestiona la orden
+    private Usuario usuario; // Mapea al empleado que creó/gestiona la orden
 
     // Si 'Estado' es una entidad aparte y quieres mantener la relación,
     // debes gestionarla. Para este caso de uso, usar un String para 'estado'
@@ -110,8 +80,8 @@ public class OrdenDeInspeccion {
     // - Getters y Setters para todos los campos
     // - toString(), equals(), hashCode() si los necesitas explícitamente.
     
-    public Boolean esDelRI(Empleado empleado) {
-		return this.empleado.equals(empleado);
+    public Boolean esDelRI(Usuario usuario) {
+		return this.usuario.equals(usuario);
 	}
 	
 	public EstacionSismologica getIdSismografo() {
@@ -129,7 +99,7 @@ public class OrdenDeInspeccion {
 		
 	}
 
-	public void actualizarSismografoAFueraDeServicio(List<MotivoFueraServicio> motivos, LocalDateTime fechaActual) {
+	public void actualizarSismografoAFueraDeServicio(List<MotivoTipo> motivos, LocalDateTime fechaActual) {
 		this.estacionSismologica.actualizarSismografoAFueraDeServicio(motivos,fechaActual);
 		
 	}
