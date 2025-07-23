@@ -26,9 +26,7 @@ public class CU37Controller {
             setFechaCreacion("2024-01-14");
             setFechaFinalizacion("2024-01-15");
             setResponsable("Juan Pérez");
-            setEstado("Completada");
-            setTareasCompletadas(5);
-            setTotalTareas(5);
+            
         }});
 
         ORDENES.add(new OrdenInspeccionDTO() {{
@@ -39,9 +37,7 @@ public class CU37Controller {
             setFechaCreacion("2024-01-18");
             setFechaFinalizacion("2024-01-19");
             setResponsable("María García");
-            setEstado("Completada");
-            setTareasCompletadas(8);
-            setTotalTareas(8);
+            
         }});
 
 		ORDENES.add(new OrdenInspeccionDTO() {{
@@ -52,9 +48,7 @@ public class CU37Controller {
             setFechaCreacion("2024-01-20");
             setFechaFinalizacion("2024-01-21");
             setResponsable("Carlos López");
-            setEstado("Completada");
-            setTareasCompletadas(3);
-            setTotalTareas(3);
+            
         }});
 
         MOTIVOS.add(new MotivoTipoDTO("1", "Avería por vibración", "El equipo presentó fallas debido a vibraciones excesivas detectadas"));
