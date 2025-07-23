@@ -27,7 +27,7 @@ public class Sismografo {
 	@ManyToOne
 	@JoinColumn(name = "cambio_estado_id")  // nombre columna FK correcto
 	private CambioEstado cambioEstado;
-	private EstacionSismologica estacionSismologica;
+	//private EstacionSismologica estacionSismologica;
 	
 	public int getId2() {
 		return this.identificadorSismografo;

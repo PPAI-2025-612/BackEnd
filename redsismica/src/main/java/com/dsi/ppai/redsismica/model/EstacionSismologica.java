@@ -20,7 +20,7 @@ public class EstacionSismologica {
     private Long id;
     private String nombre;
     @OneToOne
-    @JoinColumn(name = "sismografo_id")
+    @JoinColumn(name = "identificadorSismografo")
     private Sismografo sismografo;
 	
     public int getIdSismografo() {

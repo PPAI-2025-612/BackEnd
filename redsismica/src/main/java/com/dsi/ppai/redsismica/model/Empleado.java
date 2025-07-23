@@ -24,4 +24,8 @@ public class Empleado {
 	public boolean esResponsableReparacion() {
 		return this.rol.esResponsableReparacion();
 	}
+	
+	public Empleado getEmpleado() {
+		return this;
+	}
 }
