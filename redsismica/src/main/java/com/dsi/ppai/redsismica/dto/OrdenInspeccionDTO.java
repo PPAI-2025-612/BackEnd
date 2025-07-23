@@ -10,8 +10,6 @@ public class OrdenInspeccionDTO {
     private String fechaFinalizacion;
     private String responsable;
     private String estado;
-    private int tareasCompletadas;
-    private int totalTareas;
 
     public OrdenInspeccionDTO() {}
 
@@ -79,19 +77,4 @@ public class OrdenInspeccionDTO {
         this.estado = estado;
     }
 
-    public int getTareasCompletadas() {
-        return tareasCompletadas;
-    }
-
-    public void setTareasCompletadas(int tareasCompletadas) {
-        this.tareasCompletadas = tareasCompletadas;
-    }
-
-    public int getTotalTareas() {
-        return totalTareas;
-    }
-
-    public void setTotalTareas(int totalTareas) {
-        this.totalTareas = totalTareas;
-    }
 }
