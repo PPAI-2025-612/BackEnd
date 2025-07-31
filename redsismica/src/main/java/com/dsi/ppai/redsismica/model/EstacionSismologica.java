@@ -27,13 +27,8 @@ public class EstacionSismologica {
 		return this.sismografo.getId();
 	}
 
-	public List<MotivoTipo> obtenerMotivoTipo() {
-		
-		return sismografo.obtenerMotivoTipo();
-	}
-
-	public void actualizarSismografoAFueraDeServicio(List<MotivoTipo> motivos, LocalDateTime fechaActual) {
-		this.sismografo.actualizarSismografoAFueraDeServicio(motivos,fechaActual);
+	public void actualizarSismografoAFueraDeServicio(List<MotivoTipo> motivos, LocalDateTime fechaActual, Usuario usuario) {
+		this.sismografo.actualizarSismografoAFueraDeServicio(motivos,fechaActual, usuario);
 		
 	}
 }

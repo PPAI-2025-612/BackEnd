@@ -28,20 +28,16 @@ public class Sismografo {
 	@JoinColumn(name = "cambio_estado_id")  // nombre columna FK correcto
 	private CambioEstado cambioEstado;
 	//private EstacionSismologica estacionSismologica;
-	
-	public int getId2() {
-		return this.identificadorSismografo;
-	}
 
-	public List<MotivoTipo> obtenerMotivoTipo() {
-		return cambioEstado.obtenerMotivoTipo();
-	}
-
-	public void actualizarSismografoAFueraDeServicio(List<MotivoTipo> motivos, LocalDateTime fechaActual) {
+	public void actualizarSismografoAFueraDeServicio(List<MotivoTipo> motivos, LocalDateTime fechaActual, Usuario usuario) {
 		cambioEstado.setFechaHoraFin(Date.from(fechaActual.atZone(ZoneId.systemDefault()).toInstant()));
-		cambioEstado = new CambioEstado();
-		cambioEstado.setFechaHoraInicio(Date.from(fechaActual.atZone(ZoneId.systemDefault()).toInstant()));
-		cambioEstado.setMotivo(motivos);
+		cambioEstado = new CambioEstado(
+							Date.from(fechaActual.atZone(ZoneId.systemDefault()).toInstant()),
+							motivos,
+							usuario);
+		//cambioEstado.setFechaHoraInicio(Date.from(fechaActual.atZone(ZoneId.systemDefault()).toInstant()));
+		//cambioEstado.setMotivo(motivos);
+		//cambioEstado.setRILogResponsable(usuario);
 		
 	}
 

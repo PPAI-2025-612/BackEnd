@@ -25,7 +25,5 @@ public class Empleado {
 		return this.rol.esResponsableReparacion();
 	}
 	
-	public Empleado getEmpleado() {
-		return this;
-	}
+	
 }

@@ -17,8 +17,8 @@ public class Estado {
 	private String ambito;
 	private String nombreEstado;
 
-	public Boolean esAmbitoOrdenDelInspeccion() {
-		return this.ambito.equals("OrdenDelInspeccion");
+	public Boolean esAmbitoOrdenDeInspeccion() {
+		return this.ambito.equals("OrdenDeInspeccion");
 	}
 	
 	public Boolean esCompletamenteRealizada() {

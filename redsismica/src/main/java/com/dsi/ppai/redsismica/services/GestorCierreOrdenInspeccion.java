@@ -48,7 +48,15 @@ public class GestorCierreOrdenInspeccion {
 	private final InterfaceMail notificador;
 	
 	private final InterfaceCCRS monitor;
-
+	
+	private long ordenInspeccion;
+	
+	private String motivo;
+	
+	private String comentario;
+	
+	private Usuario empleado;
+	
 	// Inyección por constructor
 	public GestorCierreOrdenInspeccion(InterfaceMail notificador, InterfaceCCRS monitor) {
 		this.notificador = notificador;
@@ -94,6 +102,18 @@ public class GestorCierreOrdenInspeccion {
 	}
 	
 	
+	public void tomarSeleccionOrdenDeInspeccion(long idOrdenInspeccion){
+		this.ordenInspeccion=idOrdenInspeccion;
+	}
+	
+	public void tomarSeleccionMotivo(String motivo){
+		this.motivo=motivo;
+	}
+	
+	public void tomarIngresoComentario(String comentario){
+		this.comentario=comentario;
+	}
+	
 	public Objects tomarConfirmacionDeCierreInspeccion(long idOrdenInspeccion, List<MotivoTipo> motivos) {
 		OrdenDeInspeccion seleccionadaOrden = ordenInspeccionRepository.findById(idOrdenInspeccion).get();
 		if(validarMotivo(motivos)) {
@@ -127,8 +147,8 @@ public class GestorCierreOrdenInspeccion {
 	}
 
 
-	private void actualizarSismografoAFueraDeServicio(OrdenDeInspeccion seleccionadaOrden, List<MotivoTipo> motivos, LocalDateTime fechaActual) {
-		seleccionadaOrden.actualizarSismografoAFueraDeServicio(motivos,fechaActual);
+	private void actualizarSismografoAFueraDeServicio(OrdenDeInspeccion seleccionadaOrden, List<MotivoTipo> motivos, LocalDateTime fechaActual, Usuario usuario) {
+		seleccionadaOrden.actualizarSismografoAFueraDeServicio(motivos,fechaActual, usuario);
 		
 	}
 
@@ -139,7 +159,7 @@ public class GestorCierreOrdenInspeccion {
 		
 		seleccionadaOrden.cerrarOrdenInspeccion(estadoCerrado,fechaActual);
 		
-		actualizarSismografoAFueraDeServicio(seleccionadaOrden, motivos, fechaActual);
+		actualizarSismografoAFueraDeServicio(seleccionadaOrden, motivos, fechaActual, empleado);
 		
 		List<String> listaMails = buscarEmpleadoResponsableReparacion();
 		
@@ -162,7 +182,7 @@ public class GestorCierreOrdenInspeccion {
 	private Estado buscarEstadoCerrado() {
 		List<Estado> estados = (List<Estado>) estadoRepository.findAll();
 		for (Estado estado : estados) {
-			if(estado.esAmbitoOrdenDelInspeccion()) {
+			if(estado.esAmbitoOrdenDeInspeccion()) {
 				if (estado.esCerrado()) {
 					return estado;
 				}
@@ -184,7 +204,7 @@ public class GestorCierreOrdenInspeccion {
 		
 		Sesion sesionAcual = sesionRepository.findById(1L).get();
 		
-		return sesionAcual.ObtenerRILogueado();
+		return sesionAcual.getRILogueado();
 	}
 	
 	private List<ordenInspeccion> buscarOrdenInspeccionCompletamenteRealizadaDelRI(Usuario empleado) {

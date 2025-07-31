@@ -88,10 +88,6 @@ public class OrdenDeInspeccion {
 		return this.estacionSismologica.getIdSismografo();
 	}
 
-	public List<MotivoTipo> obtenerMotivoTipo() {
-		return estacionSismologica.obtenerMotivoTipo();
-		
-	}
 
 	public void cerrarOrdenInspeccion(Estado estadoCerrado, LocalDateTime fechaActual) {
 		setEstado(estadoCerrado);
@@ -99,8 +95,8 @@ public class OrdenDeInspeccion {
 		
 	}
 
-	public void actualizarSismografoAFueraDeServicio(List<MotivoTipo> motivos, LocalDateTime fechaActual) {
-		this.estacionSismologica.actualizarSismografoAFueraDeServicio(motivos,fechaActual);
+	public void actualizarSismografoAFueraDeServicio(List<MotivoTipo> motivos, LocalDateTime fechaActual, Usuario usuario) {
+		this.estacionSismologica.actualizarSismografoAFueraDeServicio(motivos,fechaActual, usuario);
 		
 	}
 

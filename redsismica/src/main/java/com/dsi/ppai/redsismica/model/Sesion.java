@@ -25,7 +25,7 @@ public class Sesion {
 	private Usuario usuario;
 	
 	
-	public Usuario ObtenerRILogueado() {
+	public Usuario getRILogueado() {
 		return usuario.getEmpleado();
 	}
 }
