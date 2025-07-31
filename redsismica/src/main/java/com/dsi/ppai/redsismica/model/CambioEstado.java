@@ -6,6 +6,7 @@ import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,7 +28,8 @@ public class CambioEstado {
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "cambio_estado_id") // FK en MotivoTipo hacia CambioEstado
 	private List<MotivoTipo> MotivoTipo;
-	
+	@ManyToOne
+    @JoinColumn(name = "usuario_id") // FK a tabla usuario
 	private Usuario RILogResponsable;
 
 	public void setMotivo(List<MotivoTipo> motivos) {

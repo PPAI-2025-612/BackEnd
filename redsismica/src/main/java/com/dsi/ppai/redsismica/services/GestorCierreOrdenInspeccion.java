@@ -54,9 +54,7 @@ public class GestorCierreOrdenInspeccion {
 	private String motivo;
 	
 	private String comentario;
-	
-	private Usuario empleado;
-	
+		
 	// Inyección por constructor
 	public GestorCierreOrdenInspeccion(InterfaceMail notificador, InterfaceCCRS monitor) {
 		this.notificador = notificador;
@@ -114,11 +112,11 @@ public class GestorCierreOrdenInspeccion {
 		this.comentario=comentario;
 	}
 	
-	public Objects tomarConfirmacionDeCierreInspeccion(long idOrdenInspeccion, List<MotivoTipo> motivos) {
+	public Objects tomarConfirmacionDeCierreInspeccion(long idOrdenInspeccion, List<MotivoTipo> motivos, Usuario empleado) {
 		OrdenDeInspeccion seleccionadaOrden = ordenInspeccionRepository.findById(idOrdenInspeccion).get();
 		if(validarMotivo(motivos)) {
 			
-			cerrarOrdenInspeccion(seleccionadaOrden,motivos);
+			cerrarOrdenInspeccion(seleccionadaOrden,motivos, empleado);
 			
 		}
 		return null;
@@ -152,7 +150,7 @@ public class GestorCierreOrdenInspeccion {
 		
 	}
 
-	private void cerrarOrdenInspeccion(OrdenDeInspeccion seleccionadaOrden, List<MotivoTipo> motivos) {
+	private void cerrarOrdenInspeccion(OrdenDeInspeccion seleccionadaOrden, List<MotivoTipo> motivos, Usuario empleado) {
 		LocalDateTime fechaActual = getFechaHoraActual();
 		
 		Estado estadoCerrado = buscarEstadoCerrado();

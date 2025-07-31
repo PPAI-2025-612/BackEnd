@@ -60,6 +60,7 @@ public class OrdenDeInspeccion {
     // Si Empleado es el responsable inicial de la orden, puedes mantenerlo así.
     // Asegúrate de que este Empleado pueda mapearse al campo 'responsable' del DTO del frontend.
     @ManyToOne
+    @JoinColumn(name = "usuario_id")
     private Usuario usuario; // Mapea al empleado que creó/gestiona la orden
 
     // Si 'Estado' es una entidad aparte y quieres mantener la relación,
