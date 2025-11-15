@@ -1,4 +1,3 @@
-// en: src/main/java/com/dsi/ppai/redsismica/observer/IObserverOrdenInspeccion.java
 package com.dsi.ppai.redsismica.observer;
 
 import java.time.LocalDateTime; // O el tipo de fecha que uses
@@ -11,6 +10,9 @@ public interface IObserverOrdenInspeccion {
      * recibir notificaciones del Gestor.
      * * Parámetros basados en el diagrama de secuencia de diseño.
      */
+    
+    // ERROR CORREGIDO: Todos los parámetros van dentro de los paréntesis, 
+    // separados por comas.
     void actualizar(String id, 
                     String nroOrd, 
                     String estado, 
@@ -20,3 +22,6 @@ public interface IObserverOrdenInspeccion {
                     String motivoSeleccionado, 
                     String comentario, 
                     String mail);
+    
+    // El punto y coma (;) erróneo fue eliminado.
+}
