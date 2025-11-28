@@ -19,9 +19,4 @@ public class Usuario {
 	@JoinColumn(name = "empleado_id")  // nombre columna FK correcto
 	private Empleado empleado;
 	
-	
-	public Usuario getEmpleado() {
-		//empleado.getEmpleado();
-		return this;
-	}
 }

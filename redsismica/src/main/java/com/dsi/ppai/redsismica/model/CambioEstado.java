@@ -14,35 +14,38 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 import lombok.Data;
+import lombok.NoArgsConstructor; // <--- ¡IMPORTANTE! Importar esto
 
 @Entity
 @Data 
+@NoArgsConstructor // <--- ¡IMPORTANTE! Agrega esto para arreglar el error
 public class CambioEstado {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	private String nombre;
-	private Date fechaHoraInicio;
-	private Date fechaHoraFin;
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "cambio_estado_id") // FK en MotivoTipo hacia CambioEstado
-	private List<MotivoTipo> MotivoTipo;
-	@ManyToOne
-    @JoinColumn(name = "usuario_id") // FK a tabla usuario
-	private Usuario RILogResponsable;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String nombre;
+    private Date fechaHoraInicio;
+    private Date fechaHoraFin;
+    
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "cambio_estado_id") 
+    private List<MotivoTipo> MotivoTipo;
+    
+    @ManyToOne
+    @JoinColumn(name = "usuario_id") 
+    private Usuario RILogResponsable;
 
-	public void setMotivo(List<MotivoTipo> motivos) {
-		this.MotivoTipo = motivos;
+    public void setMotivo(List<MotivoTipo> motivos) {
+        this.MotivoTipo = motivos;
+    }
 
-	}
-
-	public CambioEstado(Date fechaHoraInicio, List<MotivoTipo> motivoTipo, Usuario rILogResponsable) {
-		super();
-		setFechaHoraInicio(fechaHoraInicio);
-		setMotivo(motivoTipo);
-		setRILogResponsable(rILogResponsable);
-	}
-	
-	
+    // Este constructor manual fue el que eliminó el constructor por defecto.
+    // Al agregar @NoArgsConstructor arriba, Lombok vuelve a crear el constructor vacío necesario.
+    public CambioEstado(Date fechaHoraInicio, List<MotivoTipo> motivoTipo, Usuario rILogResponsable) {
+        super();
+        setFechaHoraInicio(fechaHoraInicio);
+        setMotivo(motivoTipo);
+        setRILogResponsable(rILogResponsable);
+    }
 }

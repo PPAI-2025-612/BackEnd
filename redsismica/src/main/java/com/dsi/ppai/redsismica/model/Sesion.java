@@ -1,33 +1,30 @@
 package com.dsi.ppai.redsismica.model;
 
 import java.util.Date;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*; // Imports
 import lombok.Data;
-import lombok.NoArgsConstructor; // <--- 1. CRÍTICO: Requisito de JPA
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@NoArgsConstructor // 1. CRÍTICO: Agregado para que Hibernate pueda crear instancias
+@NoArgsConstructor
 public class Sesion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;  // <-- IDENTIFICADOR OBLIGATORIO
+    private Long id;
     private Date fechaHoraDesde;
     private Date fechaHoraHasta;
     
     @ManyToOne
-    @JoinColumn(name = "usuario_id") // FK a tabla usuario
+    @JoinColumn(name = "usuario_id")
     private Usuario usuario;
     
+    // --- AQUÍ ESTÁ EL ARREGLO ---
+    // Antes tenías: return usuario.getEmpleado(); (Eso devolvía un Empleado y rompía todo)
+    // Ahora ponemos: return this.usuario; (Devuelve el Usuario, que es lo que espera tu Gestor original)
     
     public Usuario getRILogueado() {
-        return usuario.getEmpleado();
+        return this.usuario; 
     }
 }
