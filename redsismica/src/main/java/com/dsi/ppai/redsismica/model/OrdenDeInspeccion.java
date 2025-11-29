@@ -41,11 +41,9 @@ public class OrdenDeInspeccion {
     @Column(name = "numero_orden", nullable = false, unique = true)
     private int numeroOrden;
 
-      // --- Campos específicos para el Cierre de Orden (ya existentes algunos, otros nuevos) ---
+    // --- Campos específicos para el Cierre de Orden (ya existentes algunos, otros nuevos) ---
     @Column(name = "observacion_cierre", length = 1000)
     private String observacionCierre; // Ya lo tenías, mantenemos.
-
-   
 
     @ManyToOne
     @JoinColumn(name = "estado_id", nullable = false) // Nombre de la columna FK que hace referencia a Estado
@@ -53,8 +51,6 @@ public class OrdenDeInspeccion {
     // Se cambia de @ManyToOne Estado a String para manejarlo más fácilmente como texto
     // Si mantienes @ManyToOne Estado, necesitarías gestionar la entidad Estado correctamente.
     // Para simplificar, lo definimos como String para coincidir con el DTO del frontend.
-
-
 
     // --- Relaciones existentes ---
     // Si Empleado es el responsable inicial de la orden, puedes mantenerlo así.
@@ -72,6 +68,13 @@ public class OrdenDeInspeccion {
     @ManyToOne
     private EstacionSismologica estacionSismologica;
 
+    // -------------------------------------------------------------------------
+    // NUEVO CAMPO: Relación con el motivo del cierre
+    // -------------------------------------------------------------------------
+    @ManyToOne
+    @JoinColumn(name = "motivo_cierre_id") // Columna FK en la tabla ordenes_inspeccion
+    private MotivoTipo motivoCierre;
+
 
     // NOTA IMPORTANTE:
     // Al usar Lombok @Data, @NoArgsConstructor y @AllArgsConstructor,
@@ -82,42 +85,41 @@ public class OrdenDeInspeccion {
     // - toString(), equals(), hashCode() si los necesitas explícitamente.
     
     public Boolean esDelRI(Usuario usuario) {
-		return this.usuario.equals(usuario);
-	}
-	
-	public int getIdSismografo() {
-		return this.estacionSismologica.getIdSismografo();
-	}
+        return this.usuario.equals(usuario);
+    }
+  
+    public int getIdSismografo() {
+        return this.estacionSismologica.getIdSismografo();
+    }
 
+    // --- MÉTODO ACTUALIZADO ---
+    // Se agregan los parámetros para la observación y el motivo seleccionado
+    public void cerrarOrdenInspeccion(Estado estadoCerrado, LocalDateTime fechaActual, String observacion, MotivoTipo motivoSeleccionado) {
+        setEstado(estadoCerrado);
+        setFechaHoraCierre(fechaActual);
+        
+        // Seteamos los nuevos valores para que se guarden en la BD
+        setObservacionCierre(observacion);
+        setMotivoCierre(motivoSeleccionado);
+    }
 
-	public void cerrarOrdenInspeccion(Estado estadoCerrado, LocalDateTime fechaActual) {
-		setEstado(estadoCerrado);
-		setFechaHoraCierre(fechaActual);
-		
-	}
+    public void actualizarSismografoAFueraDeServicio(List<MotivoTipo> motivos, LocalDateTime fechaActual, Usuario usuario) {
+        this.estacionSismologica.actualizarSismografoAFueraDeServicio(motivos,fechaActual, usuario);
+    }
 
-	public void actualizarSismografoAFueraDeServicio(List<MotivoTipo> motivos, LocalDateTime fechaActual, Usuario usuario) {
-		this.estacionSismologica.actualizarSismografoAFueraDeServicio(motivos,fechaActual, usuario);
-		
-	}
+    public List<Empleado> buscarEmpleadoResponsableReparacion() {
+        return null;
+    }
 
-	public List<Empleado> buscarEmpleadoResponsableReparacion() {
-		return null;
-	}
+    public boolean esCompletamenteRealizada() {
+        return estado.esCompletamenteRealizada();
+    }
 
-	public boolean esCompletamenteRealizada() {
-		return estado.esCompletamenteRealizada();
-	}
+    public LocalDateTime getFechaFinalizacion() {
+        return fechaHoraFinalizacion;
+    }
 
-	public LocalDateTime getFechaFinalizacion() {
-		
-		return fechaHoraFinalizacion;
-	}
-
-	public String getNombreEstacionSismologica() {
-		
-		return estacionSismologica.getNombre(); 
-	}
-
-	
+    public String getNombreEstacionSismologica() {
+        return estacionSismologica.getNombre(); 
+    }
 }

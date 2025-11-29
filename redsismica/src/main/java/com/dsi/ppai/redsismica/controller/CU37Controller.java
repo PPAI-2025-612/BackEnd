@@ -98,10 +98,13 @@ public class CU37Controller {
                 // 3. PERSISTENCIA REAL: Guardamos el cambio en la BD
                 ordenRepository.save(orden);
                 
-                return ResponseEntity.ok("Orden " + request.getOrdenId() + " cerrada y guardada exitosamente.");
+                return ResponseEntity.ok("Orden " + request.getOrdenId() + " Cerrada y guardada exitosamente. Mensaje enviado por mail a los responsables de reparaciones y publicado en monitor CCRS.");
+            
+            // --- CORRECCIÓN AQUÍ: Se agregó la llave de cierre que faltaba ---
             } else {
                 return ResponseEntity.badRequest().body("Orden no encontrada en base de datos");
             }
+            
         } catch (NumberFormatException e) {
             return ResponseEntity.badRequest().body("ID de orden inválido");
         }

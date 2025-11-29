@@ -20,8 +20,8 @@ public class Sesion {
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
     
-    // --- AQUÍ ESTÁ EL ARREGLO ---
-    // Antes tenías: return usuario.getEmpleado(); (Eso devolvía un Empleado y rompía todo)
+    // --- ACA ESTA EL ARREGLO ---
+    // Antes teniamos: return usuario.getEmpleado(); (Eso devolvia un Empleado y rompia todo)
     // Ahora ponemos: return this.usuario; (Devuelve el Usuario, que es lo que espera tu Gestor original)
     
     public Usuario getRILogueado() {

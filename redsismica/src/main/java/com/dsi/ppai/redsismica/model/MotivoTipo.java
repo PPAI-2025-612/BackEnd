@@ -4,23 +4,24 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
+@Table(name = "motivos_tipo") // Nombre de la tabla en la base de datos
 @Data 
 public class MotivoTipo {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	private String descripcion;
-	private String nombre;
-	
-	public String getMotivoTipo() {
-		return nombre;
-	}
-	
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    private String nombre;
+    
+    private String descripcion;
+    
+    // Método solicitado para obtener el nombre
+    public String getMotivoTipo() {
+        return nombre;
+    }
 }

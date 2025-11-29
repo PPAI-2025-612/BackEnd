@@ -135,35 +135,35 @@ public class GestorCierreOrdenInspeccion {
     */
 
     // 5. NUEVO MÉTODO NOTIFICAR (Patrón Observer)
-private void notificar(OrdenDeInspeccion orden, List<MotivoTipo> motivos) {
-    System.out.println("Gestor: Notificando a " + observadores.size() + " observadores...");
+    private void notificar(OrdenDeInspeccion orden, List<MotivoTipo> motivos) {
+        System.out.println("Gestor: Notificando a " + observadores.size() + " observadores...");
 
-    // 1. Recolectar datos para la notificación
-    List<String> listaMails = buscarEmpleadoResponsableReparacion();
-    String mailDestino = listaMails.isEmpty() ? "default@mail.com" : listaMails.get(0); 
+        // 1. Recolectar datos para la notificación
+        List<String> listaMails = buscarEmpleadoResponsableReparacion();
+        String mailDestino = listaMails.isEmpty() ? "default@mail.com" : listaMails.get(0); 
 
-    String motivoStr = (motivos != null && !motivos.isEmpty()) 
-                       ? motivos.get(0).getMotivoTipo() 
-                       : "N/A";
-    
-    // Usamos el comentario que se guardó en el estado del Gestor
-    String comentarioStr = (this.comentario != null) ? this.comentario : "Cierre de orden.";
-    
-    String id = orden.getId().toString();
-    String nroOrd = String.valueOf(orden.getNumeroOrden());
-    
-    // ----- ¡AQUÍ ESTÁN LAS CORRECCIONES! -----
-    String estado = orden.getEstado().toString(); 
-    String tipo = "Inspección"; 
-    LocalDateTime fechaInicio = orden.getFechaHoraCierre(); 
-    LocalDateTime fechaFin = orden.getFechaFinalizacion();
-    // ------------------------------------------
-    
-    // 2. Iterar y notificar a todos los observadores
-    for (IObserverOrdenInspeccion obs : observadores) {
-        obs.actualizar(id, nroOrd, estado, tipo, fechaInicio, fechaFin, motivoStr, comentarioStr, mailDestino);
+        String motivoStr = (motivos != null && !motivos.isEmpty()) 
+                                ? motivos.get(0).getMotivoTipo() 
+                                : "N/A";
+        
+        // Usamos el comentario que se guardó en el estado del Gestor
+        String comentarioStr = (this.comentario != null) ? this.comentario : "Cierre de orden.";
+        
+        String id = orden.getId().toString();
+        String nroOrd = String.valueOf(orden.getNumeroOrden());
+        
+        // ----- ¡AQUÍ ESTÁN LAS CORRECCIONES! -----
+        String estado = orden.getEstado().toString(); 
+        String tipo = "Inspección"; 
+        LocalDateTime fechaInicio = orden.getFechaHoraCierre(); 
+        LocalDateTime fechaFin = orden.getFechaFinalizacion();
+        // ------------------------------------------
+        
+        // 2. Iterar y notificar a todos los observadores
+        for (IObserverOrdenInspeccion obs : observadores) {
+            obs.actualizar(id, nroOrd, estado, tipo, fechaInicio, fechaFin, motivoStr, comentarioStr, mailDestino);
+        }
     }
-}
 
 
     // ... (El método buscarEmpleadoResponsableReparacion() 
@@ -193,7 +193,15 @@ private void notificar(OrdenDeInspeccion orden, List<MotivoTipo> motivos) {
         Estado estadoCerrado = buscarEstadoCerrado();
         
         // 1. Lógica de Negocio
-        seleccionadaOrden.cerrarOrdenInspeccion(estadoCerrado,fechaActual);
+        
+        // === CAMBIO REALIZADO AQUI ===
+        // Obtenemos el motivo seleccionado (el primero de la lista, ya que es ManyToOne)
+        MotivoTipo motivoSeleccionado = (motivos != null && !motivos.isEmpty()) ? motivos.get(0) : null;
+        
+        // Pasamos los 4 parámetros necesarios: Estado, Fecha, Comentario y Motivo
+        seleccionadaOrden.cerrarOrdenInspeccion(estadoCerrado, fechaActual, this.comentario, motivoSeleccionado);
+        // ==============================
+        
         actualizarSismografoAFueraDeServicio(seleccionadaOrden, motivos, fechaActual, empleado);
         
         // 2. Persistencia (¡IMPORTANTE: ANTES de notificar!)
