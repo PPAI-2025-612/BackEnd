@@ -78,7 +78,7 @@ public class CU37Controller {
                 request.getObservacionCierre()     // Observación general
             );
             
-            return ResponseEntity.ok("Orden " + request.getOrdenId() + " cerrada y guardada exitosamente. Mensaje enviado por mail a los responsables de reparaciones, y publicado en monitor ccrs");
+            return ResponseEntity.ok("Orden " + request.getOrdenId() + " cerrada y guardada exitosamente. Mensaje enviado por *MAIL* a los responsables de reparaciones, y publicado en *MONITOR CCRS*.");
             
         } catch (NumberFormatException e) {
             return ResponseEntity.badRequest().body("ID de orden inválido");

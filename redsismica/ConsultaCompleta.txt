@@ -27,3 +27,6 @@ LEFT JOIN estado es ON o.estado_id = es.id
 
 -- Filtramos por la orden que te interesa (ej: 2028)
 WHERE o.numero_orden = 2027;
+
+
+CONSULTA COMPLETA PARA MOSTRAR TODA LA INFO NECESARIA DE ESA ORDEN DE INSPECCION
