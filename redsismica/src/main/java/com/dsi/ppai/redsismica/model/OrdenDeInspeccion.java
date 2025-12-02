@@ -10,7 +10,7 @@ import jakarta.persistence.Column; // Cambiado a jakarta.persistence
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.*;
+import jakarta.persistence.*; // Import necesario para OneToMany y CascadeType
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -69,11 +69,12 @@ public class OrdenDeInspeccion {
     private EstacionSismologica estacionSismologica;
 
     // -------------------------------------------------------------------------
-    // NUEVO CAMPO: Relación con el motivo del cierre
+    // CAMBIO IMPLEMENTADO: Relación 1 a N con la clase intermedia MotivoFueraServicio
     // -------------------------------------------------------------------------
-    @ManyToOne
-    @JoinColumn(name = "motivo_cierre_id") // Columna FK en la tabla ordenes_inspeccion
-    private MotivoTipo motivoCierre;
+    // Esta lista almacena todos los motivos seleccionados y sus comentarios específicos.
+    // cascade = ALL permite que al guardar la Orden, se guarden los motivos automáticamente.
+    @OneToMany(mappedBy = "orden", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MotivoFueraServicio> motivosDetalle = new ArrayList<>();
 
 
     // NOTA IMPORTANTE:
@@ -83,6 +84,7 @@ public class OrdenDeInspeccion {
     // - Un constructor sin argumentos (público)
     // - Getters y Setters para todos los campos
     // - toString(), equals(), hashCode() si los necesitas explícitamente.
+    
     //8)esDelRI()
     public Boolean esDelRI(Usuario usuario) {
         return this.usuario.equals(usuario);
@@ -93,15 +95,23 @@ public class OrdenDeInspeccion {
     }
 
     // --- MÉTODO ACTUALIZADO ---45)cerrarOrdenInspeccion()
-    // Se agregan los parámetros para la observación y el motivo seleccionado
-    public void cerrarOrdenInspeccion(Estado estadoCerrado, LocalDateTime fechaActual, String observacion, MotivoTipo motivoSeleccionado) {
+    // Ahora solo recibe los datos generales de la orden. 
+    // Los motivos específicos se agregan usando 'agregarMotivoConComentario' antes o durante el proceso.
+    public void cerrarOrdenInspeccion(Estado estadoCerrado, LocalDateTime fechaActual, String observacion) {
         setEstado(estadoCerrado);//46)setEstado()
         setFechaHoraCierre(fechaActual);//47)setFechaHoraCierre()
         
         // Seteamos los nuevos valores para que se guarden en la BD
         setObservacionCierre(observacion);
-        setMotivoCierre(motivoSeleccionado);
     }
+    
+    // --- NUEVO MÉTODO HELPER ---
+    // Permite agregar un motivo a la lista 'motivosDetalle' creando la instancia de la clase intermedia.
+    public void agregarMotivoConComentario(MotivoTipo tipo, String comentario) {
+        MotivoFueraServicio nuevoMotivo = new MotivoFueraServicio(this, tipo, comentario);
+        this.motivosDetalle.add(nuevoMotivo);
+    }
+
     //49)actualizarSismografoAFueraDeServicio()
     public void actualizarSismografoAFueraDeServicio(List<MotivoTipo> motivos, LocalDateTime fechaActual, Usuario usuario) {
         this.estacionSismologica.actualizarSismografoAFueraDeServicio(motivos,fechaActual, usuario);
@@ -122,6 +132,4 @@ public class OrdenDeInspeccion {
     public String getNombreEstacionSismologica() {
         return estacionSismologica.getNombre(); 
     }
-
-   
 }

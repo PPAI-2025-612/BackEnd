@@ -182,11 +182,7 @@ public class DatabaseSeeder implements CommandLineRunner {
             orden1.setFechaHoraFinalizacion(LocalDateTime.now().minusHours(5));
             
             // CONFIGURACIÓN DE CIERRE:
-            orden1.setEstado(estadoCerrada); // Estado Cerrado
-            orden1.setFechaHoraCierre(LocalDateTime.now()); // Fecha actual
-            orden1.setObservacionCierre("Se detectó una falla mecánica grave en el sensor Z."); // Observación
-            orden1.setMotivoCierre(m1); // ASIGNACIÓN DEL MOTIVO: Avería por vibración
-            
+            orden1.setEstado(estadoCompletada);
             orden1.setUsuario(usuarioJuan);
             orden1.setEstacionSismologica(estacion1);
             ordenRepository.save(orden1);

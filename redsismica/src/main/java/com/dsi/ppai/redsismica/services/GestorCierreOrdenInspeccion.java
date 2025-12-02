@@ -1,7 +1,7 @@
 package com.dsi.ppai.redsismica.services;
 
 import com.dsi.ppai.redsismica.dto.CierreOrdenRequest;
-import com.dsi.ppai.redsismica.dto.MotivoSeleccionadoDTO;
+import com.dsi.ppai.redsismica.dto.MotivoSeleccionadoDTO; // Import necesario
 import com.dsi.ppai.redsismica.model.Empleado;
 import com.dsi.ppai.redsismica.model.Estado;
 import com.dsi.ppai.redsismica.model.MotivoTipo;
@@ -63,7 +63,6 @@ public class GestorCierreOrdenInspeccion {
     /**
      * CONSTRUCTOR
      * Inicializamos la lista de observadores vacía.
-     * Ya no usamos @Autowired como antes aquí porque los crearemos manualmente en el método new(), para validar consistencia con el diagrama.
      */
     public GestorCierreOrdenInspeccion() {
         this.observadores = new ArrayList<>();
@@ -71,7 +70,6 @@ public class GestorCierreOrdenInspeccion {
     
     // --- IMPLEMENTACIÓN PATRÓN OBSERVER (Sujeto) ---
 
-    
     public void suscribir(IObserverOrdenInspeccion observador) {
         if (!observadores.contains(observador)) {
             this.observadores.add(observador);
@@ -123,34 +121,61 @@ public class GestorCierreOrdenInspeccion {
     public void tomarIngresoComentario(String comentario){
         this.comentario=comentario;
     }
-    //38)tomarConfirmacionDeCierreInspeccion()
-    public Objects tomarConfirmacionDeCierreInspeccion(long idOrdenInspeccion, List<MotivoTipo> motivos, Usuario empleado) {
+    
+    //38)tomarConfirmacionDeCierreInspeccion() 
+    // --- CAMBIO: Se recibe la lista de DTOs (Motivos + Comentarios) y la observación General
+    public Objects tomarConfirmacionDeCierreInspeccion(long idOrdenInspeccion, List<MotivoSeleccionadoDTO> motivosDTO, Usuario empleado, String observacionGeneral) {
+        
         OrdenDeInspeccion seleccionadaOrden = ordenInspeccionRepository.findById(idOrdenInspeccion).get();
-        if(validarMotivo(motivos)) {
-            cerrarOrdenInspeccion(seleccionadaOrden, motivos, empleado);
-        }
+        
+        // Llamamos al método de cierre interno con los datos nuevos
+        cerrarOrdenInspeccion(seleccionadaOrden, motivosDTO, empleado, observacionGeneral);
+        
         return null;
     }
     
-   
-
     @Transactional
-    private void cerrarOrdenInspeccion(OrdenDeInspeccion seleccionadaOrden, List<MotivoTipo> motivos, Usuario empleado) {
+    // --- CAMBIO: Firma actualizada para recibir DTOs y observación general
+    private void cerrarOrdenInspeccion(OrdenDeInspeccion seleccionadaOrden, List<MotivoSeleccionadoDTO> motivosDTO, Usuario empleado, String obsGeneral) {
         LocalDateTime fechaActual = getFechaHoraActual();
-        
         Estado estadoCerrado = buscarEstadoCerrado();
         
         // 1. Lógica de Negocio y Persistencia
-        MotivoTipo motivoSeleccionado = (motivos != null && !motivos.isEmpty()) ? motivos.get(0) : null;
         
-        seleccionadaOrden.cerrarOrdenInspeccion(estadoCerrado, fechaActual, this.comentario, motivoSeleccionado);
+        // Seteamos estado, fecha y observación general
+        seleccionadaOrden.cerrarOrdenInspeccion(estadoCerrado, fechaActual, obsGeneral);
         
-        actualizarSismografoAFueraDeServicio(seleccionadaOrden, motivos, fechaActual, empleado);
+        // --- PROCESAMIENTO DE MÚLTIPLES MOTIVOS (NUEVO) ---
+        // Lista auxiliar para usar en la actualización del sismógrafo (mantenemos compatibilidad de tipos)
+        List<MotivoTipo> listaTiposParaSismografo = new ArrayList<>();
         
+        if (motivosDTO != null) {
+            for (MotivoSeleccionadoDTO dto : motivosDTO) {
+                // Buscamos el MotivoTipo real en la BD usando el ID del DTO
+                Long idTipo = Long.parseLong(dto.getId());
+                MotivoTipo tipo = motivoTipoRepository.findById(idTipo).orElse(null);
+                
+                if (tipo != null) {
+                    // IMPLEMENTACIÓN: Agregamos el motivo a la orden usando la nueva clase intermedia
+                    // Esto guarda el motivo Y su comentario específico
+                    seleccionadaOrden.agregarMotivoConComentario(tipo, dto.getComentario());
+                    
+                    // Agregamos a la lista auxiliar para actualizar sismógrafo
+                    listaTiposParaSismografo.add(tipo);
+                }
+            }
+        }
+        // ----------------------------------------------------
+        
+        // Actualizamos sismógrafo pasando la lista de tipos
+        actualizarSismografoAFueraDeServicio(seleccionadaOrden, listaTiposParaSismografo, fechaActual, empleado);
+        
+        // Guardamos todo (CascadeType.ALL se encarga de los motivos)
         ordenInspeccionRepository.save(seleccionadaOrden);
         System.out.println("Gestor: Orden guardada en BD. Iniciando notificaciones...");
         
         
+        // --- MANEJO MANUAL DE OBSERVADORES (COMO EN TU CÓDIGO ORIGINAL) ---
         this.observadores.clear();
 
         //  62: new() NotificacionMail
@@ -166,8 +191,9 @@ public class GestorCierreOrdenInspeccion {
         this.suscribir(publicadorCCRS);
 
         //  66: notificar()
-        this.notificar(seleccionadaOrden, motivos);
+        this.notificar(seleccionadaOrden, listaTiposParaSismografo);
     }
+
     //66)notificar()
     private void notificar(OrdenDeInspeccion orden, List<MotivoTipo> motivos) {
         System.out.println("Gestor: Ejecutando notificar() a " + observadores.size() + " observadores.");
@@ -179,7 +205,8 @@ public class GestorCierreOrdenInspeccion {
                                 ? motivos.get(0).getMotivoTipo() 
                                 : "N/A";
         
-        String comentarioStr = (this.comentario != null) ? this.comentario : "Cierre de orden.";
+        // Usamos el comentario de la orden directamente
+        String comentarioStr = (orden.getObservacionCierre() != null) ? orden.getObservacionCierre() : "Cierre de orden.";
         
         String id = orden.getId().toString();
         String nroOrd = String.valueOf(orden.getNumeroOrden());

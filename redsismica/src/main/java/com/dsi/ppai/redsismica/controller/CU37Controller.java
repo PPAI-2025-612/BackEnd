@@ -4,15 +4,14 @@ import com.dsi.ppai.redsismica.dto.CierreOrdenRequest;
 import com.dsi.ppai.redsismica.dto.MotivoSeleccionadoDTO;
 import com.dsi.ppai.redsismica.dto.MotivoTipoDTO;
 import com.dsi.ppai.redsismica.dto.OrdenInspeccionDTO;
-import com.dsi.ppai.redsismica.model.Estado;
 import com.dsi.ppai.redsismica.model.OrdenDeInspeccion;
-import com.dsi.ppai.redsismica.repository.EstadoRepository;
 import com.dsi.ppai.redsismica.repository.OrdenInspeccionRepository;
+import com.dsi.ppai.redsismica.services.GestorCierreOrdenInspeccion;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -25,13 +24,11 @@ public class CU37Controller {
     @Autowired
     private OrdenInspeccionRepository ordenRepository;
 
-    // Agregamos esto para poder buscar el estado "Cerrado"
     @Autowired
-    private EstadoRepository estadoRepository;
+    private GestorCierreOrdenInspeccion gestorCierre;
 
     private static final List<MotivoTipoDTO> MOTIVOS = new ArrayList<>();
 
-    //Aca encontramos los motivos predefinidos
     static {
         MOTIVOS.add(new MotivoTipoDTO("1", "Avería por vibración", "El equipo presentó fallas debido a vibraciones excesivas detectadas"));
         MOTIVOS.add(new MotivoTipoDTO("2", "Desgaste de componentes", "Componentes críticos muestran signos de desgaste significativo"));
@@ -72,42 +69,22 @@ public class CU37Controller {
 
         try {
             Long idOrden = Long.parseLong(request.getOrdenId());
-            Optional<OrdenDeInspeccion> ordenOpt = ordenRepository.findById(idOrden);
-
-            if (ordenOpt.isPresent()) {
-                OrdenDeInspeccion orden = ordenOpt.get();
-
-                // 1. Buscar el estado "Cerrado" en la BD
-                Estado estadoCerrado = null;
-                Iterable<Estado> estados = estadoRepository.findAll();
-                for (Estado e : estados) {
-                    if ("Cerrado".equalsIgnoreCase(e.getNombreEstado())) {
-                        estadoCerrado = e;
-                        break;
-                    }
-                }
-
-                if (estadoCerrado == null) {
-                     return ResponseEntity.badRequest().body("Error: No existe el estado 'Cerrado' en la base de datos.");
-                }
-
-                // 2. Actualizar los datos de la orden
-                orden.setEstado(estadoCerrado);
-                orden.setFechaHoraCierre(LocalDateTime.now());
-                orden.setObservacionCierre(request.getObservacionCierre());
-
-                // 3. PERSISTENCIA REAL: Guardamos el cambio en la BD
-                ordenRepository.save(orden);
-                
-                return ResponseEntity.ok("Orden " + request.getOrdenId() + " Cerrada y guardada exitosamente. Mensaje enviado por mail a los responsables de reparaciones y publicado en monitor CCRS.");
             
+            // --- CAMBIO: Llamada al Gestor con la lista de DTOs para procesar múltiples motivos y comentarios ---
+            gestorCierre.tomarConfirmacionDeCierreInspeccion(
+                idOrden,
+                request.getMotivosSeleccionados(), // Lista de DTOs del frontend
+                null, // Empleado (el gestor lo busca internamente si es null)
+                request.getObservacionCierre()     // Observación general
+            );
             
-            } else {
-                return ResponseEntity.badRequest().body("Orden no encontrada en base de datos");
-            }
+            return ResponseEntity.ok("Orden " + request.getOrdenId() + " cerrada y guardada exitosamente. Mensaje enviado por mail a los responsables de reparaciones, y publicado en monitor ccrs");
             
         } catch (NumberFormatException e) {
             return ResponseEntity.badRequest().body("ID de orden inválido");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("Error al procesar el cierre: " + e.getMessage());
         }
     }
 
