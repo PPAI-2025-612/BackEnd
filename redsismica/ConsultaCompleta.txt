@@ -1,0 +1,29 @@
+SELECT 
+    -- Datos de la Orden
+    o.id AS 'ID Orden',
+    o.numero_orden AS 'Numero Orden',
+    o.fecha_hora_cierre AS 'Fecha Cierre',
+    o.fecha_hora_finalizacion AS 'Fecha Finalizacion',
+    o.observacion_cierre AS 'Observacion General',
+
+    -- Datos Relacionados (Nombres en lugar de IDs para que sea legible)
+    u.nombre_usuario AS 'Usuario Responsable',
+    e.nombre AS 'Estacion Sismologica',
+    es.nombre_estado AS 'Estado Orden',
+
+    -- Datos de los Motivos (Detalle)
+    mt.nombre AS 'Motivo Seleccionado',
+    m.comentario AS 'Comentario'
+
+FROM ordenes_inspeccion o
+-- Unimos con la tabla de motivos (LEFT para ver la orden aunque no tenga motivos)
+LEFT JOIN motivos_fuera_servicio m ON o.id = m.orden_id
+LEFT JOIN motivos_tipo mt ON m.motivo_tipo_id = mt.id
+
+-- Unimos con las otras tablas para traer los nombres (no solo IDs)
+LEFT JOIN usuario u ON o.usuario_id = u.id
+LEFT JOIN estacion_sismologica e ON o.estacion_sismologica_id = e.id
+LEFT JOIN estado es ON o.estado_id = es.id
+
+-- Filtramos por la orden que te interesa (ej: 2028)
+WHERE o.numero_orden = 2027;

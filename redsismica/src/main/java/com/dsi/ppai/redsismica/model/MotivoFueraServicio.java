@@ -33,7 +33,7 @@ public class MotivoFueraServicio {
         this.motivoTipo = motivoTipo;
         this.comentario = comentario;
     }
-    
+    //30)ObtenerMotivoTipo
     public String getNombreMotivo() {
         return motivoTipo.getMotivoTipo();
     }
