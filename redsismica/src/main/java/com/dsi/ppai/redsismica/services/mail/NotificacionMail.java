@@ -9,7 +9,7 @@ import java.util.ArrayList;
 @Service
 public class NotificacionMail implements IObserverOrdenInspeccion { // <-- IMPLEMENTA LA NUEVA INTERFAZ IOBSERVERORDENINSPECCION
 
-    // MÉTODO POLIMORFICO DE LA INTERFAZ (PÚBLICO)
+    // MÉTODO POLIMORFICO DE LA INTERFAZ (PÚBLICO) 67)actualizar()
     @Override
     public void actualizar(String id, String nroOrd, String estado, String tipo, 
                            LocalDateTime fechaInicio, LocalDateTime fechaFin, 
@@ -32,7 +32,7 @@ public class NotificacionMail implements IObserverOrdenInspeccion { // <-- IMPLE
     }
 
     // MÉTODO "enviarMail" (PRIVADO)
-    // Esta era la lógica original
+    // Esta era la lógica original 68)enviarMail()
     private void enviarMail(List<String> to, String subject, String body) {
         for (String mail : to) {
             System.out.println("Simulando envío de email:");

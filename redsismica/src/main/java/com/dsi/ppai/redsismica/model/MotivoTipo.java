@@ -20,7 +20,7 @@ public class MotivoTipo {
     
     private String descripcion;
     
-    // Método solicitado para obtener el nombre
+    // Método solicitado para obtener el nombre 28)getMotivoTipo()
     public String getMotivoTipo() {
         return nombre;
     }

@@ -83,26 +83,26 @@ public class OrdenDeInspeccion {
     // - Un constructor sin argumentos (público)
     // - Getters y Setters para todos los campos
     // - toString(), equals(), hashCode() si los necesitas explícitamente.
-    
+    //8)esDelRI()
     public Boolean esDelRI(Usuario usuario) {
         return this.usuario.equals(usuario);
     }
-  
+    //15)getIdSismografo()
     public int getIdSismografo() {
         return this.estacionSismologica.getIdSismografo();
     }
 
-    // --- MÉTODO ACTUALIZADO ---
+    // --- MÉTODO ACTUALIZADO ---45)cerrarOrdenInspeccion()
     // Se agregan los parámetros para la observación y el motivo seleccionado
     public void cerrarOrdenInspeccion(Estado estadoCerrado, LocalDateTime fechaActual, String observacion, MotivoTipo motivoSeleccionado) {
-        setEstado(estadoCerrado);
-        setFechaHoraCierre(fechaActual);
+        setEstado(estadoCerrado);//46)setEstado()
+        setFechaHoraCierre(fechaActual);//47)setFechaHoraCierre()
         
         // Seteamos los nuevos valores para que se guarden en la BD
         setObservacionCierre(observacion);
         setMotivoCierre(motivoSeleccionado);
     }
-
+    //49)actualizarSismografoAFueraDeServicio()
     public void actualizarSismografoAFueraDeServicio(List<MotivoTipo> motivos, LocalDateTime fechaActual, Usuario usuario) {
         this.estacionSismologica.actualizarSismografoAFueraDeServicio(motivos,fechaActual, usuario);
     }
@@ -110,15 +110,15 @@ public class OrdenDeInspeccion {
     public List<Empleado> buscarEmpleadoResponsableReparacion() {
         return null;
     }
-
+    //9)esCompletamenteRealizada()
     public boolean esCompletamenteRealizada() {
         return estado.esCompletamenteRealizada();
     }
-
+    //12)getFechaFinalizacion()
     public LocalDateTime getFechaFinalizacion() {
         return fechaHoraFinalizacion;
     }
-
+    //13)getNombreEstacionSismologica()
     public String getNombreEstacionSismologica() {
         return estacionSismologica.getNombre(); 
     }

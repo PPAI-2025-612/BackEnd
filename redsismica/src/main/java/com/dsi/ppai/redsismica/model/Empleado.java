@@ -20,7 +20,7 @@ public class Empleado {
 
     @ManyToOne
     private Rol rol;  // Relación ManyToOne con Rol
-
+    //58)esResponsableReparacion()
 	public boolean esResponsableReparacion() {
 		return this.rol.esResponsableReparacion();
 	}

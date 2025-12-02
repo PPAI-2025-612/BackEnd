@@ -20,11 +20,11 @@ public class Estado {
 	public Boolean esAmbitoOrdenDeInspeccion() {
 		return this.ambito.equals("OrdenDeInspeccion");
 	}
-	
+	//10)esCompletamenteRealizada()
 	public Boolean esCompletamenteRealizada() {
 		return this.nombreEstado.equals("CompletamenteRealizada");
 	}
-	
+	//44)esCerrado()
 	public Boolean esCerrado() {
 		return this.nombreEstado.equals("Cerrado");
 	}

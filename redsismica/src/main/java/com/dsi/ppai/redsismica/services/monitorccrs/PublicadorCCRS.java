@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Service
 public class PublicadorCCRS implements IObserverOrdenInspeccion { // <-- IMPLEMENTA LA NUEVA INTERFAZ IOBSERVERORDENINSPECCION
 
-    // MÉTODO POLIMORFICO DE LA INTERFAZ (PÚBLICO)
+    // MÉTODO POLIMORFICO DE LA INTERFAZ (PÚBLICO) 69)actualizar()
     @Override
     public void actualizar(String id, String nroOrd, String estado, String tipo, 
                            LocalDateTime fechaInicio, LocalDateTime fechaFin, 
@@ -27,7 +27,7 @@ public class PublicadorCCRS implements IObserverOrdenInspeccion { // <-- IMPLEME
     }
 
     // MÉTODO "publicarEnMonitor" (PRIVADO)
-    // Esta era tu lógica original
+    // Esta era la lógica original 70)publicarEnMonitor()
     private void publicarEnMonitor(String mensaje) {
         System.out.println("Publicacion Monitor CCRS: " + mensaje);//Simulación de publicación
     }

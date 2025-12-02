@@ -27,20 +27,16 @@ public class Sismografo {
 	@ManyToOne
 	@JoinColumn(name = "cambio_estado_id")  // nombre columna FK correcto
 	private CambioEstado cambioEstado;
-	//private EstacionSismologica estacionSismologica;
-
+	//51)actualizarSismografoAFueraDeServicio()
 	public void actualizarSismografoAFueraDeServicio(List<MotivoTipo> motivos, LocalDateTime fechaActual, Usuario usuario) {
 		cambioEstado.setFechaHoraFin(Date.from(fechaActual.atZone(ZoneId.systemDefault()).toInstant()));
 		cambioEstado = new CambioEstado(
 							Date.from(fechaActual.atZone(ZoneId.systemDefault()).toInstant()),
 							motivos,
 							usuario);
-		//cambioEstado.setFechaHoraInicio(Date.from(fechaActual.atZone(ZoneId.systemDefault()).toInstant()));
-		//cambioEstado.setMotivo(motivos);
-		//cambioEstado.setRILogResponsable(usuario);
 		
 	}
-
+	//17)getId()
 	public int getId() {
 		return identificadorSismografo;
 	}

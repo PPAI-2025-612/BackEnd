@@ -71,7 +71,7 @@ public class GestorCierreOrdenInspeccion {
     
     // --- IMPLEMENTACIÓN PATRÓN OBSERVER (Sujeto) ---
 
-    // Método para agregar suscripciones
+    
     public void suscribir(IObserverOrdenInspeccion observador) {
         if (!observadores.contains(observador)) {
             this.observadores.add(observador);
@@ -82,7 +82,7 @@ public class GestorCierreOrdenInspeccion {
         this.observadores.remove(observador);
     }
         
-    // --- MÉTODOS PÚBLICOS (API / CONTROLADOR) ---
+    // --- MÉTODOS PÚBLICOS (API / CONTROLADOR) ---40)cerrarOrden()
 
     public String cerrarOrden(CierreOrdenRequest request) throws IllegalArgumentException {
         if (request.getObservacionCierre() == null || request.getObservacionCierre().trim().isEmpty()) {
@@ -101,29 +101,29 @@ public class GestorCierreOrdenInspeccion {
         return "Orden " + request.getOrdenId() + " cerrada exitosamente por " + request.getResponsableNombre();
     }
     
-    public List<ordenInspeccion> opcionCierreOrdenDeInspeccion() {
+    public List<ordenInspeccion> OrdenDeInspeccion() {
         Usuario empleado = buscarRILogeado();
         List<ordenInspeccion> ordenFinales = buscarOrdenInspeccionCompletamenteRealizadaDelRI(empleado);
         ordenFinales = ordenarOrdenesDeInspeccion(ordenFinales);
         return ordenFinales;
     }
-    
+    //25)tomarObservacionCierre()
     public List<String> tomarObservacionCierre() {
         return habilitarActualizarSituacionSismografo();
     }
-    
+    //22)tomarSeleccionOrdenDeInspeccion()
     public void tomarSeleccionOrdenDeInspeccion(long idOrdenInspeccion){
         this.ordenInspeccion=idOrdenInspeccion;
     }
-    
+    //32)tomarSeleccionMotivo()
     public void tomarSeleccionMotivo(String motivo){
         this.motivo=motivo;
     }
-    
+    //35)tomarIngresoComentario()
     public void tomarIngresoComentario(String comentario){
         this.comentario=comentario;
     }
-    
+    //38)tomarConfirmacionDeCierreInspeccion()
     public Objects tomarConfirmacionDeCierreInspeccion(long idOrdenInspeccion, List<MotivoTipo> motivos, Usuario empleado) {
         OrdenDeInspeccion seleccionadaOrden = ordenInspeccionRepository.findById(idOrdenInspeccion).get();
         if(validarMotivo(motivos)) {
@@ -168,11 +168,10 @@ public class GestorCierreOrdenInspeccion {
         //  66: notificar()
         this.notificar(seleccionadaOrden, motivos);
     }
-
+    //66)notificar()
     private void notificar(OrdenDeInspeccion orden, List<MotivoTipo> motivos) {
         System.out.println("Gestor: Ejecutando notificar() a " + observadores.size() + " observadores.");
 
-        // Recolectar datos para enviar a los observadores
         List<String> listaMails = buscarEmpleadoResponsableReparacion();
         String mailDestino = listaMails.isEmpty() ? "default@mail.com" : listaMails.get(0); 
 
@@ -197,7 +196,8 @@ public class GestorCierreOrdenInspeccion {
     }
 
     // --- MÉTODOS PRIVADOS  ---
-
+    //57)buscarEmpleadoResponsableReparacion()
+    
     private List<String> buscarEmpleadoResponsableReparacion() {
         List<String> listaMails = new ArrayList<String>();
         List<Empleado> empleadosReparacion = (List<Empleado>) empleadoRepository.findAll();
@@ -208,15 +208,15 @@ public class GestorCierreOrdenInspeccion {
         }
         return listaMails;
     }
-
+    //48)actualizarSismografoAFueraDeServicio()
     private void actualizarSismografoAFueraDeServicio(OrdenDeInspeccion seleccionadaOrden, List<MotivoTipo> motivos, LocalDateTime fechaActual, Usuario usuario) {
         seleccionadaOrden.actualizarSismografoAFueraDeServicio(motivos,fechaActual, usuario);
     }
-
+    //41)getFechaHoraActual()
     private LocalDateTime getFechaHoraActual() {
         return LocalDateTime.now();
     }
-
+    //42)buscarEstadoCerrado()
     private Estado buscarEstadoCerrado() {
         List<Estado> estados = (List<Estado>) estadoRepository.findAll();
         for (Estado estado : estados) {
@@ -228,7 +228,7 @@ public class GestorCierreOrdenInspeccion {
         }
         return null;
     }
-
+    //39)validarMotivo()
     private boolean validarMotivo(List<MotivoTipo> motivos) {
         for (MotivoTipo motivo : motivos) {
             if(motivo == null) {
@@ -237,12 +237,12 @@ public class GestorCierreOrdenInspeccion {
         }
         return true;
     }
-
+    //4)buscarRIlogueado()
     private Usuario buscarRILogeado() {
         Sesion sesionAcual = sesionRepository.findById(1L).get();
         return sesionAcual.getRILogueado();
     }
-    
+    //7)buscarOrdenInspeccionCompletamenteRealizadaDelRI
     private List<ordenInspeccion> buscarOrdenInspeccionCompletamenteRealizadaDelRI(Usuario empleado) {
         List<OrdenDeInspeccion> ordenes = (List<OrdenDeInspeccion>) ordenInspeccionRepository.findAll();
         List<ordenInspeccion> ordenFinales = new ArrayList<>();
@@ -261,7 +261,7 @@ public class GestorCierreOrdenInspeccion {
         }
         return ordenFinales;
     }
-    
+    //18)ordenarOrdenesDeInspeccion()
     private List<ordenInspeccion> ordenarOrdenesDeInspeccion(List<ordenInspeccion> ordenes){
         Collections.sort(ordenes, new Comparator<ordenInspeccion>() {
             @Override
@@ -274,11 +274,11 @@ public class GestorCierreOrdenInspeccion {
         });
         return ordenes;
     }
-    
+    //26)habilitarActualizarSituacionSismografo()
     private List<String> habilitarActualizarSituacionSismografo() {
         return buscarMotivosTipo() ;
     }
-    
+    //27)buscarMotivosTipo()
     private List<String> buscarMotivosTipo() {
         List<String> motivoTipo = new ArrayList<>();
         List<MotivoTipo> motivos = (List<MotivoTipo>) motivoTipoRepository.findAll();

@@ -22,11 +22,11 @@ public class EstacionSismologica {
     @OneToOne
     @JoinColumn(name = "identificadorSismografo")
     private Sismografo sismografo;
-	
+    //16)getIdSismografo()
     public int getIdSismografo() {
 		return this.sismografo.getId();
 	}
-
+  //51)actualizarSismografoAFueraDeServicio()
 	public void actualizarSismografoAFueraDeServicio(List<MotivoTipo> motivos, LocalDateTime fechaActual, Usuario usuario) {
 		this.sismografo.actualizarSismografoAFueraDeServicio(motivos,fechaActual, usuario);
 		

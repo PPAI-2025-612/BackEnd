@@ -14,11 +14,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 import lombok.Data;
-import lombok.NoArgsConstructor; // <--- ¡IMPORTANTE! Importar esto
+import lombok.NoArgsConstructor; 
 
 @Entity
 @Data 
-@NoArgsConstructor // <--- ¡IMPORTANTE! Agrega esto para arreglar el error
+@NoArgsConstructor 
 public class CambioEstado {
 
     @Id
@@ -35,7 +35,7 @@ public class CambioEstado {
     @ManyToOne
     @JoinColumn(name = "usuario_id") 
     private Usuario RILogResponsable;
-
+    
     public void setMotivo(List<MotivoTipo> motivos) {
         this.MotivoTipo = motivos;
     }
@@ -44,8 +44,8 @@ public class CambioEstado {
     // Al agregar @NoArgsConstructor arriba, Lombok vuelve a crear el constructor vacío necesario.
     public CambioEstado(Date fechaHoraInicio, List<MotivoTipo> motivoTipo, Usuario rILogResponsable) {
         super();
-        setFechaHoraInicio(fechaHoraInicio);
-        setMotivo(motivoTipo);
-        setRILogResponsable(rILogResponsable);
+        setFechaHoraInicio(fechaHoraInicio);//54)setFechaHoraInicio
+        setMotivo(motivoTipo);//55)setMotivo
+        setRILogResponsable(rILogResponsable);//56)setRILogResponsable
     }
 }

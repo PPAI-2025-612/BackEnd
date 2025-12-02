@@ -5,7 +5,7 @@ import java.time.LocalDateTime; // tomamos LocalDateTime para los parámetros de
 // Esta es la única interfaz que el Gestor conoce.
 public interface IObserverOrdenInspeccion {
 
-   //metodo polimorfico que lo observadores utilizan e implementan con sus propias lógicas
+   //metodo polimorfico que lo observadores utilizan e implementan con sus propias lógicas 
     void actualizar(String id, 
                     String nroOrd, 
                     String estado, 

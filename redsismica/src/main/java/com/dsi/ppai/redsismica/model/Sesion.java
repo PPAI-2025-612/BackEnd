@@ -24,6 +24,7 @@ public class Sesion {
     // Antes teniamos: return usuario.getEmpleado(); (Eso devolvia un Empleado y rompia todo)
     // Ahora ponemos: return this.usuario; (Devuelve el Usuario, que es lo que espera tu Gestor original)
     
+    //5)getRILogueado()
     public Usuario getRILogueado() {
         return this.usuario; 
     }
