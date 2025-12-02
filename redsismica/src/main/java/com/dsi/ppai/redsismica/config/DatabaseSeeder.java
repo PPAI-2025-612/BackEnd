@@ -50,7 +50,7 @@ public class DatabaseSeeder implements CommandLineRunner {
             estadoRepository.save(estadoCerrada);
 
             // -----------------------------------------------------------------
-            // 2. CREACIÓN DE MOTIVOS TIPO (Lista solicitada)
+            // 2. CREACIÓN DE MOTIVOS TIPO 
             // -----------------------------------------------------------------
             
             MotivoTipo m1 = new MotivoTipo();
