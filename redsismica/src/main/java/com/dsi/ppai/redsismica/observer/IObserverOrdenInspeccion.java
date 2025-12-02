@@ -1,18 +1,11 @@
 package com.dsi.ppai.redsismica.observer;
 
-import java.time.LocalDateTime; // O el tipo de fecha que uses
+import java.time.LocalDateTime; // tomamos LocalDateTime para los parámetros de fecha y hora actual
 
-// Esta es la única interfaz que el Gestor conocerá.
+// Esta es la única interfaz que el Gestor conoce.
 public interface IObserverOrdenInspeccion {
 
-    /**
-     * Define el método que todos los observadores deben implementar para
-     * recibir notificaciones del Gestor.
-     * * Parámetros basados en el diagrama de secuencia de diseño.
-     */
-    
-    // ERROR CORREGIDO: Todos los parámetros van dentro de los paréntesis, 
-    // separados por comas.
+   //metodo polimorfico que lo observadores utilizan e implementan con sus propias lógicas
     void actualizar(String id, 
                     String nroOrd, 
                     String estado, 
@@ -23,5 +16,5 @@ public interface IObserverOrdenInspeccion {
                     String comentario, 
                     String mail);
     
-    // El punto y coma (;) erróneo fue eliminado.
 }
+//idSismografo, nroOrdenInspeccion, nombreEstado, motivoTipo, fechaInicio, fechaFin, motivoSeleccionado, comentario, mailDestino);

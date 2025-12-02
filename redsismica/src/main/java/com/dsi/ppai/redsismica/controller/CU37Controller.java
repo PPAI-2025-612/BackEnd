@@ -31,6 +31,7 @@ public class CU37Controller {
 
     private static final List<MotivoTipoDTO> MOTIVOS = new ArrayList<>();
 
+    //Aca encontramos los motivos predefinidos
     static {
         MOTIVOS.add(new MotivoTipoDTO("1", "Avería por vibración", "El equipo presentó fallas debido a vibraciones excesivas detectadas"));
         MOTIVOS.add(new MotivoTipoDTO("2", "Desgaste de componentes", "Componentes críticos muestran signos de desgaste significativo"));
@@ -100,7 +101,7 @@ public class CU37Controller {
                 
                 return ResponseEntity.ok("Orden " + request.getOrdenId() + " Cerrada y guardada exitosamente. Mensaje enviado por mail a los responsables de reparaciones y publicado en monitor CCRS.");
             
-            // --- CORRECCIÓN AQUÍ: Se agregó la llave de cierre que faltaba ---
+            
             } else {
                 return ResponseEntity.badRequest().body("Orden no encontrada en base de datos");
             }

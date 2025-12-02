@@ -15,28 +15,28 @@ import com.dsi.ppai.redsismica.repository.MotivoTipoRepository;
 import com.dsi.ppai.redsismica.repository.OrdenInspeccionRepository;
 import com.dsi.ppai.redsismica.repository.SesionRepository;
 
-// ¡IMPORT NUEVO!
+// Interface del Observer
 import com.dsi.ppai.redsismica.observer.IObserverOrdenInspeccion; 
 
-// ¡IMPORTS ELIMINADOS!
-// import com.dsi.ppai.redsismica.services.mail.InterfaceMail;
-// import com.dsi.ppai.redsismica.services.monitorccrs.InterfaceCCRS;
+// OBSERVADORES CONCRETOS 
+import com.dsi.ppai.redsismica.services.mail.NotificacionMail; 
+import com.dsi.ppai.redsismica.services.monitorccrs.PublicadorCCRS;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List; // <-- ¡MUY IMPORTANTE!
+import java.util.List; 
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import jakarta.transaction.Transactional; // <-- IMPORTANTE para persistencia
+import jakarta.transaction.Transactional;
 
 @Service
 public class GestorCierreOrdenInspeccion {
 
-    // --- DEPENDENCIAS DE REPOSITORIO (igual que antes) ---
+    // --- DEPENDENCIAS DE REPOSITORIO ---
     @Autowired
     private SesionRepository sesionRepository;
     
@@ -52,29 +52,38 @@ public class GestorCierreOrdenInspeccion {
     @Autowired
     private MotivoTipoRepository motivoTipoRepository;
     
-    // --- ¡DEPENDENCIAS AHORA DESACOPLADAS! ---
+    // Lista de observadores (Sujeto)
+    private List<IObserverOrdenInspeccion> observadores;
     
-    // 1. ELIMINADAS:
-    // private final InterfaceMail notificador;
-    // private final InterfaceCCRS monitor;
-    
-    // 2. AÑADIDA:
-    private final List<IObserverOrdenInspeccion> observadores;
-    
-    // --- Atributos de estado (igual que antes) ---
+    // --- Atributos de estado ---
     private long ordenInspeccion;
     private String motivo;
     private String comentario;
         
-    // 3. CONSTRUCTOR REFACTORIZADO
-    @Autowired
-    public GestorCierreOrdenInspeccion(List<IObserverOrdenInspeccion> observadores) {
-        // Spring inyectará automáticamente NotificacionMail y PublicadorCCRS aquí
-        this.observadores = observadores;
+    /**
+     * CONSTRUCTOR
+     * Inicializamos la lista de observadores vacía.
+     * Ya no usamos @Autowired como antes aquí porque los crearemos manualmente en el método new(), para validar consistencia con el diagrama.
+     */
+    public GestorCierreOrdenInspeccion() {
+        this.observadores = new ArrayList<>();
+    }
+    
+    // --- IMPLEMENTACIÓN PATRÓN OBSERVER (Sujeto) ---
+
+    // Método para agregar suscripciones
+    public void suscribir(IObserverOrdenInspeccion observador) {
+        if (!observadores.contains(observador)) {
+            this.observadores.add(observador);
+        }
+    }
+    
+    public void quitar(IObserverOrdenInspeccion observador) {
+        this.observadores.remove(observador);
     }
         
-    // ... (El método public String cerrarOrden(CierreOrdenRequest request) 
-    // ...  queda exactamente igual, no se toca)
+    // --- MÉTODOS PÚBLICOS (API / CONTROLADOR) ---
+
     public String cerrarOrden(CierreOrdenRequest request) throws IllegalArgumentException {
         if (request.getObservacionCierre() == null || request.getObservacionCierre().trim().isEmpty()) {
             throw new IllegalArgumentException("La observación de cierre es obligatoria");
@@ -92,11 +101,7 @@ public class GestorCierreOrdenInspeccion {
         return "Orden " + request.getOrdenId() + " cerrada exitosamente por " + request.getResponsableNombre();
     }
     
-    
-    // ... (Todos los métodos públicos de lógica de negocio
-    // ...  quedan exactamente igual, no se tocan)
-    
-    public List<ordenInspeccion> opcionCierreOrdenDeInspeccion() { //listo
+    public List<ordenInspeccion> opcionCierreOrdenDeInspeccion() {
         Usuario empleado = buscarRILogeado();
         List<ordenInspeccion> ordenFinales = buscarOrdenInspeccionCompletamenteRealizadaDelRI(empleado);
         ordenFinales = ordenarOrdenesDeInspeccion(ordenFinales);
@@ -120,7 +125,6 @@ public class GestorCierreOrdenInspeccion {
     }
     
     public Objects tomarConfirmacionDeCierreInspeccion(long idOrdenInspeccion, List<MotivoTipo> motivos, Usuario empleado) {
-        // (Asumo que el 'this.comentario' y 'this.motivo' se setearon antes con los métodos de arriba)
         OrdenDeInspeccion seleccionadaOrden = ordenInspeccionRepository.findById(idOrdenInspeccion).get();
         if(validarMotivo(motivos)) {
             cerrarOrdenInspeccion(seleccionadaOrden, motivos, empleado);
@@ -128,17 +132,47 @@ public class GestorCierreOrdenInspeccion {
         return null;
     }
     
-    // 4. MÉTODOS DE NOTIFICACIÓN ACOPЛADOS (ELIMINADOS)
-    /*
-    private void publicarNotificacionEnMonitorCCRS(String mensaje) { ... }
-    private void enviarNotificacionEmpleadoReparacion(List<String> listaMails, String asunto, String mensaje) { ... }
-    */
+   
 
-    // 5. NUEVO MÉTODO NOTIFICAR (Patrón Observer)
+    @Transactional
+    private void cerrarOrdenInspeccion(OrdenDeInspeccion seleccionadaOrden, List<MotivoTipo> motivos, Usuario empleado) {
+        LocalDateTime fechaActual = getFechaHoraActual();
+        
+        Estado estadoCerrado = buscarEstadoCerrado();
+        
+        // 1. Lógica de Negocio y Persistencia
+        MotivoTipo motivoSeleccionado = (motivos != null && !motivos.isEmpty()) ? motivos.get(0) : null;
+        
+        seleccionadaOrden.cerrarOrdenInspeccion(estadoCerrado, fechaActual, this.comentario, motivoSeleccionado);
+        
+        actualizarSismografoAFueraDeServicio(seleccionadaOrden, motivos, fechaActual, empleado);
+        
+        ordenInspeccionRepository.save(seleccionadaOrden);
+        System.out.println("Gestor: Orden guardada en BD. Iniciando notificaciones...");
+        
+        
+        this.observadores.clear();
+
+        //  62: new() NotificacionMail
+        NotificacionMail notificacionMail = new NotificacionMail();
+        
+        //  63: suscribir(o:IObserverNotCierreOrdenInsp)
+        this.suscribir(notificacionMail);
+
+        //  64: new() PublicadorCCRS
+        PublicadorCCRS publicadorCCRS = new PublicadorCCRS();
+        
+        //  65: suscribir(o:IObserverNotCierreOrdenInsp)
+        this.suscribir(publicadorCCRS);
+
+        //  66: notificar()
+        this.notificar(seleccionadaOrden, motivos);
+    }
+
     private void notificar(OrdenDeInspeccion orden, List<MotivoTipo> motivos) {
-        System.out.println("Gestor: Notificando a " + observadores.size() + " observadores...");
+        System.out.println("Gestor: Ejecutando notificar() a " + observadores.size() + " observadores.");
 
-        // 1. Recolectar datos para la notificación
+        // Recolectar datos para enviar a los observadores
         List<String> listaMails = buscarEmpleadoResponsableReparacion();
         String mailDestino = listaMails.isEmpty() ? "default@mail.com" : listaMails.get(0); 
 
@@ -146,28 +180,24 @@ public class GestorCierreOrdenInspeccion {
                                 ? motivos.get(0).getMotivoTipo() 
                                 : "N/A";
         
-        // Usamos el comentario que se guardó en el estado del Gestor
         String comentarioStr = (this.comentario != null) ? this.comentario : "Cierre de orden.";
         
         String id = orden.getId().toString();
         String nroOrd = String.valueOf(orden.getNumeroOrden());
-        
-        // ----- ¡AQUÍ ESTÁN LAS CORRECCIONES! -----
         String estado = orden.getEstado().toString(); 
         String tipo = "Inspección"; 
         LocalDateTime fechaInicio = orden.getFechaHoraCierre(); 
         LocalDateTime fechaFin = orden.getFechaFinalizacion();
-        // ------------------------------------------
-        
-        // 2. Iterar y notificar a todos los observadores
+      
+        // [Bucle del Observer]: Iterar y actualizar
         for (IObserverOrdenInspeccion obs : observadores) {
+            // Pasos 68 (enviarMail) y 70 (publicarEnMonitor) ocurren DENTRO de este método actualizar en cada clase
             obs.actualizar(id, nroOrd, estado, tipo, fechaInicio, fechaFin, motivoStr, comentarioStr, mailDestino);
         }
     }
 
+    // --- MÉTODOS PRIVADOS  ---
 
-    // ... (El método buscarEmpleadoResponsableReparacion() 
-    // ...  queda exactamente igual, no se toca)
     private List<String> buscarEmpleadoResponsableReparacion() {
         List<String> listaMails = new ArrayList<String>();
         List<Empleado> empleadosReparacion = (List<Empleado>) empleadoRepository.findAll();
@@ -179,44 +209,9 @@ public class GestorCierreOrdenInspeccion {
         return listaMails;
     }
 
-    // ... (El método actualizarSismografoAFueraDeServicio() 
-    // ...  queda exactamente igual, no se toca)
     private void actualizarSismografoAFueraDeServicio(OrdenDeInspeccion seleccionadaOrden, List<MotivoTipo> motivos, LocalDateTime fechaActual, Usuario usuario) {
         seleccionadaOrden.actualizarSismografoAFueraDeServicio(motivos,fechaActual, usuario);
     }
-
-    // 6. MÉTODO DE CIERRE REFACTORIZADO
-    @Transactional // Asegura que el save() sea atómico
-    private void cerrarOrdenInspeccion(OrdenDeInspeccion seleccionadaOrden, List<MotivoTipo> motivos, Usuario empleado) {
-        LocalDateTime fechaActual = getFechaHoraActual();
-        
-        Estado estadoCerrado = buscarEstadoCerrado();
-        
-        // 1. Lógica de Negocio
-        
-        // === CAMBIO REALIZADO AQUI ===
-        // Obtenemos el motivo seleccionado (el primero de la lista, ya que es ManyToOne)
-        MotivoTipo motivoSeleccionado = (motivos != null && !motivos.isEmpty()) ? motivos.get(0) : null;
-        
-        // Pasamos los 4 parámetros necesarios: Estado, Fecha, Comentario y Motivo
-        seleccionadaOrden.cerrarOrdenInspeccion(estadoCerrado, fechaActual, this.comentario, motivoSeleccionado);
-        // ==============================
-        
-        actualizarSismografoAFueraDeServicio(seleccionadaOrden, motivos, fechaActual, empleado);
-        
-        // 2. Persistencia (¡IMPORTANTE: ANTES de notificar!)
-        ordenInspeccionRepository.save(seleccionadaOrden);
-        System.out.println("Gestor: Orden persistida en BD.");
-        
-        // 3. Notificación (Patrón Observer)
-        this.notificar(seleccionadaOrden, motivos);
-        
-        // --- (Toda la lógica de crear 'asunto', 'mensaje' y llamar a 
-        // --- 'enviar...' y 'publicar...' fue eliminada) ---
-    }
-
-    // ... (Todos los demás métodos privados de búsqueda y utilidades
-    // ...  quedan exactamente igual, no se tocan)
 
     private LocalDateTime getFechaHoraActual() {
         return LocalDateTime.now();
@@ -269,7 +264,6 @@ public class GestorCierreOrdenInspeccion {
     
     private List<ordenInspeccion> ordenarOrdenesDeInspeccion(List<ordenInspeccion> ordenes){
         Collections.sort(ordenes, new Comparator<ordenInspeccion>() {
-            
             @Override
             public int compare(ordenInspeccion o1, ordenInspeccion o2) {
                 if (o1.getFechaFinalizacion() == null && o2.getFechaFinalizacion() == null) return 0;

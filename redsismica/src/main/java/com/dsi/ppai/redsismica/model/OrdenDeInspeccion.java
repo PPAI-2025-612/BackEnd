@@ -2,7 +2,6 @@ package com.dsi.ppai.redsismica.model;
 
 import java.time.LocalDateTime; // Usar LocalDateTime para manejo moderno de fechas
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 // Importa las anotaciones de Jakarta si estás en Spring Boot 3+
@@ -11,14 +10,15 @@ import jakarta.persistence.Column; // Cambiado a jakarta.persistence
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.*;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table; // Es buena práctica especificar el nombre de la tabla
-
+import lombok.AllArgsConstructor; // Lombok para constructor con todos los args
 import lombok.Data;
 import lombok.NoArgsConstructor; // Lombok para constructor sin args
-import lombok.AllArgsConstructor; // Lombok para constructor con todos los args
 
 @Entity
 @Table(name = "ordenes_inspeccion") // Asegúrate de que el nombre de la tabla coincida en tu DB
@@ -122,4 +122,6 @@ public class OrdenDeInspeccion {
     public String getNombreEstacionSismologica() {
         return estacionSismologica.getNombre(); 
     }
+
+   
 }
