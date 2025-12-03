@@ -175,7 +175,7 @@ public class GestorCierreOrdenInspeccion {
         System.out.println("Gestor: Orden guardada en BD. Iniciando notificaciones...");
         
         
-        // --- MANEJO MANUAL DE OBSERVADORES (COMO EN TU CÓDIGO ORIGINAL) ---
+        // --- MANEJO MANUAL DE OBSERVADORES  ---
         this.observadores.clear();
 
         //  62: new() NotificacionMail

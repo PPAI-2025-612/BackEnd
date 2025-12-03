@@ -25,7 +25,7 @@ LEFT JOIN usuario u ON o.usuario_id = u.id
 LEFT JOIN estacion_sismologica e ON o.estacion_sismologica_id = e.id
 LEFT JOIN estado es ON o.estado_id = es.id
 
--- Filtramos por la orden que te interesa (ej: 2028)
+-- Filtramos por la orden que te interesa
 WHERE o.numero_orden = 2027;
 
 

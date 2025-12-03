@@ -18,8 +18,8 @@ public class PublicadorCCRS implements IObserverOrdenInspeccion { // <-- IMPLEME
 
         // 1. Adaptar los datos para el mensaje a enviar o publicar
         String mensaje = String.format(
-            "CASO_ACTUALIZADO: id=%s, nroOrd=%s, estado=%s, motivo=%s",
-            id, nroOrd, estado, motivoSeleccionado
+            "CASO_ACTUALIZADO: id=%s, nroOrd=%s, estado=%s, motivo=%s, comentario=%s",
+            id, nroOrd, estado, motivoSeleccionado, comentario
         );
 
         // 2. Llamar al método publicarEnMonitor (privado)
